@@ -27,6 +27,30 @@ function processKeyPress(event) {
 		case (Event.KEY_DELETE):
 		case 0:
 			break;
+		// Handle ctrl-b
+		case 98:
+			if (event.ctrlKey) {
+				toggleBold();
+			} else {
+				insertCharacter(event.which);
+			}
+			break;
+		// Handle ctrl-i
+		case 105:
+			if (event.ctrlKey) {
+				toggleItalic();
+			} else {
+				insertCharacter(event.which);
+			}
+			break;
+		// Handle ctrl-u
+		case 117:
+			if (event.ctrlKey) {
+				toggleUnderline();
+			} else {
+				insertCharacter(event.which);
+			}
+			break;
 		case (Event.KEY_ESC):
 			break;
 		case (Event.KEY_RETURN):
@@ -38,7 +62,6 @@ function processKeyPress(event) {
 }
 
 function processKeyDown(event) {
-
 	switch(event.which) {
 		case (Event.KEY_DELETE):
 		case 0:
@@ -177,17 +200,17 @@ function insertNewline() {
 }
 
 function toggleBold() {
-	toggleButtonAppearance(this.id);
+	toggleButtonAppearance('bold');
 	insertElement('b');
 }
 
 function toggleItalic() {
-	toggleButtonAppearance(this.id);
+	toggleButtonAppearance('italic');
 	insertElement('i');
 }
 
 function toggleUnderline() {
-	toggleButtonAppearance(this.id);
+	toggleButtonAppearance('underline');
 	insertElement('u');
 }
 
