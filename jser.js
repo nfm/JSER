@@ -76,41 +76,65 @@ function insertCharacter(ascii) {
 }
 
 function insertBackspace() {
+	var content;
+
 	// If editor is empty, return
 	if (!(editor.lastChild)) {
 		return;
 	}
 
 	switch(editor.lastChild.nodeName) {
-		// If the item before the cursor is a character
+		// If the item before the cursor is plain text
 		case "#text":
-			// If the text item is a &nbsp;
-			if (suffixed(editor.innerHTML, "&nbsp;")) {
-				editor.innerHTML = editor.innerHTML.slice(0, editor.innerHTML.length - 6);
-			// If the text item is a &lt;
-			} else if (suffixed(editor.innerHTML, "&lt;")) {
-				editor.innerHTML = editor.innerHTML.slice(0, editor.innerHTML.length - 4);
-			// If the text item is a &gt;
-			} else if (suffixed(editor.innerHTML, "&gt;")) {
-				editor.innerHTML = editor.innerHTML.slice(0, editor.innerHTML.length - 4);
-			// If the text item is a &amp;
-			} else if (suffixed(editor.innerHTML, "&amp;")) {
-				editor.innerHTML = editor.innerHTML.slice(0, editor.innerHTML.length - 5);
-			} else {
-				editor.innerHTML = editor.innerHTML.slice(0, editor.innerHTML.length - 1);
-			}
+			content = editor.innerHTML;
 			break;
 		// If the item before the cursor is a newline
 		case "BR":
 			editor.removeChild(editor.lastChild);
-			break;
+			return;
+			//break;
+		// If the item before the cursor is bold, italic, or underlined text
 		case "B":
 		case "I":
 		case "U":
-			editor.lastChild.innerHTML = editor.lastChild.innerHTML.slice(0, editor.lastChild.innerHTML.length - 1);
+			content = editor.lastChild.innerHTML;
+			// If this node has no content
+			if (content == "") {
+				// Remove the node
+				editor.removeChild(editor.lastChild);
+				return;
+			}
 			break;
 		default:
-			alert("insertBackspace(): nodeName not handled");
+			alert("insertBackspace(): nodeName " + editor.lastChild.nodeName + " not handled");
+	}
+
+	// If the text item is a &nbsp;
+	if (suffixed(content, "&nbsp;")) {
+		content = content.slice(0, content.length - 6);
+	// If the text item is a &lt;
+	} else if (suffixed(content, "&lt;")) {
+		content = content.slice(0, content.length - 4);
+	// If the text item is a &gt;
+	} else if (suffixed(content, "&gt;")) {
+		content = content.slice(0, content.length - 4);
+	// If the text item is a &amp;
+	} else if (suffixed(content, "&amp;")) {
+		content = content.slice(0, content.length - 5);
+	} else {
+		content = content.slice(0, content.length - 1);
+	}
+
+	// Update the contents of editor
+	switch(editor.lastChild.nodeName) {
+		case "#text":
+			editor.innerHTML = content;
+			break
+		case "B":
+		case "U":
+		case "I":
+			editor.lastChild.innerHTML = content;
+			break;
 	}
 }
 
