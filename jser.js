@@ -2,9 +2,19 @@
 
 var editor = $('editor');
 
-function insertElement(event) {
-	var element = new Element((Event.findElement(event, 'div').id));
-	editor.appendChild(element);
+function insertElement(type) {
+	var element = new Element(type);
+	// If editor has children and the last child is not text
+	if ((editor.lastChild) && (editor.lastChild.nodeType != "3")) {
+		// If the last child is a <br />
+		if (editor.lastChild.nodeName == "BR") {
+			editor.appendChild(element);
+		} else {
+			editor.lastChild.appendChild(element);
+		}
+	} else {
+		editor.appendChild(element);
+	}
 }
 
 function processKeyPress(event) {
@@ -68,8 +78,19 @@ function insertCharacter(ascii) {
 
 	// If editor has a last child and it's not a text node
 	if ((editor.lastChild) && (editor.lastChild.nodeName != "#text")) {
-		// Append the character to the last child
-		editor.lastChild.innerHTML += character;
+		var node = editor.descendants().last();
+		// If the last descendant is a <br />
+		if (node.nodeName == "BR") {
+			while (node.nodeName == "BR") {
+				// Iterate up to find the first non <br />
+				node = node.parentNode;
+			}
+			// Insert the character here
+			node.innerHTML += character;
+		} else {
+			// Append the character to the last descendant
+			editor.descendants().last().innerHTML += character;
+		}
 	} else {
 		editor.innerHTML += character;
 	}
@@ -152,7 +173,19 @@ function insertDelete() {
 }
 
 function insertNewline() {
-	editor.insert(new Element('br'));
+	insertElement('br');
+}
+
+function insertBold() {
+	insertElement('b');
+}
+
+function insertItalic() {
+	insertElement('i');
+}
+
+function insertUnderline() {
+	insertElement('u');
 }
 
 //]]>
