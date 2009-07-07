@@ -177,15 +177,29 @@ function insertNewline() {
 }
 
 function toggleBold() {
+	toggleButtonAppearance(this.id);
 	insertElement('b');
 }
 
 function toggleItalic() {
+	toggleButtonAppearance(this.id);
 	insertElement('i');
 }
 
 function toggleUnderline() {
+	toggleButtonAppearance(this.id);
 	insertElement('u');
+}
+
+function toggleButtonAppearance(id) {
+	// If the button is already active
+	if ($(id).classNames().include("active")) {
+		// Deactivate it
+		$(id).removeClassName("active");
+	} else {
+		// Activate it
+		$(id).addClassName("active");
+	}
 }
 
 //]]>
