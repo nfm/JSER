@@ -196,22 +196,33 @@ function insertDelete() {
 }
 
 function insertNewline() {
-	insertElement('br');
+	insertElement('BR');
 }
 
 function toggleBold() {
-	toggleButtonAppearance('bold');
-	insertElement('b');
+	toggleButton('bold', 'B');
 }
 
 function toggleItalic() {
-	toggleButtonAppearance('italic');
-	insertElement('i');
+	toggleButton('italic', 'I');
 }
 
 function toggleUnderline() {
-	toggleButtonAppearance('underline');
-	insertElement('u');
+	toggleButton('underline', 'U');
+}
+
+function toggleButton(id, tag) {
+	toggleButtonAppearance(id);
+	if ((editor.lastChild) && (editor.lastChild.nodeName != "#text")) {
+		// If the current node is <tag> or a parent node is <tag>
+		if ((editor.lastChild.nodeName == tag) || ((editor.lastChild).ancestors().include(tag))) {
+			// Create an empty text node after the <tag> node to work with
+			editor.appendChild(document.createTextNode(""));
+		} 
+	} else {
+		// Open a <tag>
+		insertElement(tag);
+	}
 }
 
 function toggleButtonAppearance(id) {
