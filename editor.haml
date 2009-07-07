@@ -1,0 +1,25 @@
+!!! XML
+!!! Strict
+
+%html{ html_attrs('en-US') }
+  %head
+    %title JSER
+    %link{ :rel => "stylesheet", :type => "text/css", :href => "style.css" }
+    %script{ :type => "text/javascript", :src => "prototype.js" }
+
+  %body
+    #container
+      #buttons
+        #bold.inline.button{ :onclick => "insertElement('b');" }<
+          %b B
+        #italic.inline.button{ :onmousedown => "insertElement('i');" }<
+          %i I
+        #underline.inline.button{ :onmousedown => "insertElement('u');" }<
+          %u U
+
+      #editor
+
+    %script{ :type => "text/javascript", :src => "jser.js" }
+    :javascript
+      document.observe('keydown', processKeyDown);
+      document.observe('keypress', processKeyPress);
