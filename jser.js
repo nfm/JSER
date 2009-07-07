@@ -176,15 +176,15 @@ function insertNewline() {
 	insertElement('br');
 }
 
-function insertBold() {
+function toggleBold() {
 	insertElement('b');
 }
 
-function insertItalic() {
+function toggleItalic() {
 	insertElement('i');
 }
 
-function insertUnderline() {
+function toggleUnderline() {
 	insertElement('u');
 }
 

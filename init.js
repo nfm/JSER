@@ -1,8 +1,8 @@
 //<![CDATA[
 
-$('bold').observe('click', insertBold);
-$('italic').observe('click', insertItalic);
-$('underline').observe('click', insertUnderline);
+$('bold').observe('click', toggleBold);
+$('italic').observe('click', toggleItalic);
+$('underline').observe('click', toggleUnderline);
 document.observe('keydown', processKeyDown);
 document.observe('keypress', processKeyPress);
 
