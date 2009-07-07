@@ -2,8 +2,8 @@
 
 var editor = $('editor');
 
-function insertElement(elementType) {
-	var element = new Element(elementType);
+function insertElement(event) {
+	var element = new Element((Event.findElement(event, 'div').id));
 	editor.appendChild(element);
 }
 

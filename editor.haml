@@ -10,16 +10,14 @@
   %body
     #container
       #buttons
-        #bold.inline.button{ :onclick => "insertElement('b');" }<
+        #b.inline.button<
           %b B
-        #italic.inline.button{ :onmousedown => "insertElement('i');" }<
+        #i.inline.button<
           %i I
-        #underline.inline.button{ :onmousedown => "insertElement('u');" }<
+        #u.inline.button<
           %u U
 
       #editor
 
     %script{ :type => "text/javascript", :src => "jser.js" }
-    :javascript
-      document.observe('keydown', processKeyDown);
-      document.observe('keypress', processKeyPress);
+    %script{ :type => "text/javascript", :src => "init.js" }
