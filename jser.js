@@ -1,6 +1,7 @@
 //<![CDATA[
 
 var editor = $('editor');
+var cursor = $('cursor');
 var cursorTimer;
 
 function insertElement(type) {
@@ -88,36 +89,37 @@ function insertCharacter(ascii) {
 
 	switch(character) {
 		case " ":
-			character = "&nbsp;";
+			character = "\u00a0";
 			break;
 		case "<":
-			character = "&lt;";
+			character = "\u003c";
 			break;
 		case ">":
-			character = "&gt;";
+			character = "\u003e";
 			break;
 		case "&":
-			character = "&amp;";
+			character = "\u0026";
 			break;
 	}
 
 	// If editor has a last child and it's not a text node
-	if ((editor.lastChild) && (editor.lastChild.nodeName != "#text")) {
-		var node = editor.descendants().last();
+	if (cursor.previousSibling) {
+		var node = cursor.previousSibling;
 		// If the last descendant is a <br />
 		if (node.nodeName == "BR") {
 			while (node.nodeName == "BR") {
 				// Iterate up to find the first non <br />
-				node = node.parentNode;
+				node = node.previousSibling();
 			}
 			// Insert the character here
-			node.innerHTML += character;
+			node.nodeValue += character;
 		} else {
 			// Append the character to the last descendant
-			editor.descendants().last().innerHTML += character;
+			node.nodeValue += character;
 		}
 	} else {
-		editor.innerHTML += character;
+		// Create an initial text node before the cursor
+		editor.insertBefore(document.createTextNode(character), cursor);
 	}
 }
 
@@ -243,21 +245,25 @@ function startCursorTimer() {
 }
 
 function restartCursorTimer() {
-	setCursorHidden();
+	setCursorVisible();
 	clearTimeout(cursorTimer);
 	cursorTimer = setTimeout("startCursorTimer(); toggleCursor()", 800);
 }
 
 function toggleCursor() {
-	if ($('cursor').style.visibility == "visible") {
+	if (cursor.style.visibility == "visible") {
 		setCursorHidden();
 	} else {
-		$('cursor').style.visibility = "visible";
+		setCursorVisible();
 	}
 }
 
 function setCursorHidden() {
-	$('cursor').style.visibility = "hidden";
+	cursor.style.visibility = "hidden";
+}
+
+function setCursorVisible() {
+	cursor.style.visibility = "visible";
 }
 
 //]]>
