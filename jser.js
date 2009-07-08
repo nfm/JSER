@@ -127,34 +127,34 @@ function insertBackspace() {
 	var content;
 
 	// If editor is empty, return
-	if (!(editor.lastChild)) {
+	if (!(cursor.previousSibling)) {
 		return;
 	}
 
-	switch(editor.lastChild.nodeName) {
+	switch(cursor.previousSibling.nodeName) {
 		// If the item before the cursor is plain text
 		case "#text":
-			content = editor.innerHTML;
+			content = cursor.previousSibling.nodeValue;
 			break;
 		// If the item before the cursor is a newline
 		case "BR":
-			editor.removeChild(editor.lastChild);
+			editor.removeChild(cursor.previousSibling);
 			return;
 			//break;
 		// If the item before the cursor is bold, italic, or underlined text
 		case "B":
 		case "I":
 		case "U":
-			content = editor.lastChild.innerHTML;
+			content = cursor.previousSibling.nodeValue;
 			// If this node has no content
 			if (content == "") {
 				// Remove the node
-				editor.removeChild(editor.lastChild);
+				editor.removeChild(cursor.previousSibling);
 				return;
 			}
 			break;
 		default:
-			alert("insertBackspace(): nodeName " + editor.lastChild.nodeName + " not handled");
+			alert("insertBackspace(): nodeName " + cursor.previousSibling.nodeName + " not handled");
 	}
 
 	// If the text item is a &nbsp;
@@ -174,14 +174,14 @@ function insertBackspace() {
 	}
 
 	// Update the contents of editor
-	switch(editor.lastChild.nodeName) {
+	switch(cursor.previousSibling.nodeName) {
 		case "#text":
-			editor.innerHTML = content;
+			cursor.previousSibling.nodeValue = content;
 			break
 		case "B":
 		case "U":
 		case "I":
-			editor.lastChild.innerHTML = content;
+			cursor.previousSibling.nodeValue = content;
 			break;
 	}
 }
