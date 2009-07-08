@@ -1,6 +1,7 @@
 //<![CDATA[
 
 var editor = $('editor');
+var cursorTimer;
 
 function insertElement(type) {
 	var element = new Element(type);
@@ -18,6 +19,7 @@ function insertElement(type) {
 }
 
 function processKeyPress(event) {
+	restartCursorTimer();
 	Event.stop(event);
 
 	switch(event.which) {
@@ -234,6 +236,28 @@ function toggleButtonAppearance(id) {
 		// Activate it
 		$(id).addClassName("active");
 	}
+}
+
+function startCursorTimer() {
+	cursorTimer = setTimeout("startCursorTimer(); toggleCursor()", 800);
+}
+
+function restartCursorTimer() {
+	setCursorHidden();
+	clearTimeout(cursorTimer);
+	cursorTimer = setTimeout("startCursorTimer(); toggleCursor()", 800);
+}
+
+function toggleCursor() {
+	if ($('cursor').style.visibility == "visible") {
+		setCursorHidden();
+	} else {
+		$('cursor').style.visibility = "visible";
+	}
+}
+
+function setCursorHidden() {
+	$('cursor').style.visibility = "hidden";
 }
 
 //]]>

@@ -18,15 +18,18 @@ body {
 	height: 1.5em;
 	padding: 0.25em 1%;
 	background-color: #AAAAAA;
+	border: 1px solid transparent;
 }
 
 #editor {
-	width: 98%%;
+	width: 94%;
 	border: 1px solid #AAAAAA;
 	border-top: none;
+	background-color: #FFFFFF;
 	min-height: 400px;
 	padding: 3%;
 	font-size: 0.9em;
+	cursor: text;
 }
 
 .inline {
@@ -50,4 +53,9 @@ body {
 .active, .active:hover {
 	background-color: #D3D3D3;
 	border: 1px solid #999999;
+}
+
+#cursor {
+	visibility: visible;
+	margin: 0 -5px;
 }

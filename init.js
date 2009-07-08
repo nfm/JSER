@@ -6,4 +6,6 @@ $('underline').observe('click', toggleUnderline);
 document.observe('keydown', processKeyDown);
 document.observe('keypress', processKeyPress);
 
+startCursorTimer();
+
 //]]>
