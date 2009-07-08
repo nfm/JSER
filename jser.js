@@ -6,16 +6,26 @@ var cursorTimer;
 
 function insertElement(type) {
 	var element = new Element(type);
-	// If editor has children and the last child is not text
-	if ((editor.lastChild) && (editor.lastChild.nodeType != "3")) {
-		// If the last child is a <br />
-		if (editor.lastChild.nodeName == "BR") {
-			editor.appendChild(element);
+	var node = cursor.previousSibling;
+
+	// If there is a node before the cursor and it is not a text node
+	if ((node) && (node.nodeName != "#text")) {
+		// If the node is a <br />
+		if (node.nodeName == "BR") {
+			editor.insertBefore(element, cursor);
+		// For any other nodes (<b>, <i> etc)
 		} else {
-			editor.lastChild.appendChild(element);
+			// If the node's last child is not a text node or <br />
+			if ((node.lastChild) && (node.lastChild.nodeName != "#text") && (node.lastChild.nodeName != "BR")) {
+				// Append element to the node's last child
+				node.lastChild.appendChild(element);
+			} else {
+				// Append element to the node before the cursor
+				node.appendChild(element);
+			}
 		}
 	} else {
-		editor.appendChild(element);
+		editor.insertBefore(element, cursor);
 	}
 }
 
@@ -85,8 +95,36 @@ function processKeyDown(event) {
 }
 
 function insertCharacter(ascii) {
-	character = String.fromCharCode(ascii);
+	character = encodeCharacter(String.fromCharCode(ascii));
 
+	var node = cursor.previousSibling;
+	// If there is a node before the cursor
+	if (node) {
+		// Find the last descendant of the node before the cursor
+		while (node.lastChild) {
+			node = node.lastChild;
+		}
+
+		switch(node.nodeName) {
+			case "BR":
+				// Create a new text node after the <br /> in the parent node
+				node.parentNode.appendChild(document.createTextNode(character));
+				break;
+			case "#text":
+				// Append the character to this text node
+				node.nodeValue += character;
+				break;
+			default:
+				// Create a new text node and append it to this node
+				node.appendChild(document.createTextNode(character));
+		}
+	} else {
+		// The editor is empty - create a text node before the cursor
+		editor.insertBefore(document.createTextNode(character), cursor);
+	}
+}
+
+function encodeCharacter(character) {
 	switch(character) {
 		case " ":
 			character = "\u00a0";
@@ -101,88 +139,57 @@ function insertCharacter(ascii) {
 			character = "\u0026";
 			break;
 	}
-
-	// If editor has a last child and it's not a text node
-	if (cursor.previousSibling) {
-		var node = cursor.previousSibling;
-		// If the last descendant is a <br />
-		if (node.nodeName == "BR") {
-			while (node.nodeName == "BR") {
-				// Iterate up to find the first non <br />
-				node = node.previousSibling();
-			}
-			// Insert the character here
-			node.nodeValue += character;
-		} else {
-			// Append the character to the last descendant
-			node.nodeValue += character;
-		}
-	} else {
-		// Create an initial text node before the cursor
-		editor.insertBefore(document.createTextNode(character), cursor);
-	}
 }
 
 function insertBackspace() {
 	var content;
+	var node = cursor.previousSibling;
 
-	// If editor is empty, return
-	if (!(cursor.previousSibling)) {
-		return;
-	}
+	// If there is no node before the cursor
+	if (!node) { return; }
 
-	switch(cursor.previousSibling.nodeName) {
+	switch(node.nodeName) {
 		// If the item before the cursor is plain text
 		case "#text":
-			content = cursor.previousSibling.nodeValue;
+			content = node.nodeValue;
 			break;
 		// If the item before the cursor is a newline
 		case "BR":
-			editor.removeChild(cursor.previousSibling);
+			editor.removeChild(node);
 			return;
-			//break;
 		// If the item before the cursor is bold, italic, or underlined text
 		case "B":
 		case "I":
 		case "U":
-			content = cursor.previousSibling.nodeValue;
-			// If this node has no content
-			if (content == "") {
+			// Find the last descendant of the node before the cursor
+			if (node) {
+				while ((node) && (node.lastChild != "") && (node.lastChild != null)) {
+					node = node.lastChild;
+				}
+				content = node.nodeValue;
+			}
+
+			// If this node is an empty tag (ie <b/>)
+			if ((content == null) || (content == "")) {
+				// Toggle the appearance of the appropriate button
+				toggleButtonAppearance(node.nodeName);
 				// Remove the node
-				editor.removeChild(cursor.previousSibling);
+				node.parentNode.removeChild(node);
+				// Backspace again into the parent node
+				insertBackspace();
 				return;
 			}
 			break;
 		default:
-			alert("insertBackspace(): nodeName " + cursor.previousSibling.nodeName + " not handled");
+			alert("insertBackspace(): nodeName " + node.nodeName + " not handled");
 	}
 
-	// If the text item is a &nbsp;
-	if (suffixed(content, "&nbsp;")) {
-		content = content.slice(0, content.length - 6);
-	// If the text item is a &lt;
-	} else if (suffixed(content, "&lt;")) {
-		content = content.slice(0, content.length - 4);
-	// If the text item is a &gt;
-	} else if (suffixed(content, "&gt;")) {
-		content = content.slice(0, content.length - 4);
-	// If the text item is a &amp;
-	} else if (suffixed(content, "&amp;")) {
-		content = content.slice(0, content.length - 5);
+	content = content.slice(0, content.length - 1);
+
+	if (content == "") {
+		node.parentNode.removeChild(node);
 	} else {
-		content = content.slice(0, content.length - 1);
-	}
-
-	// Update the contents of editor
-	switch(cursor.previousSibling.nodeName) {
-		case "#text":
-			cursor.previousSibling.nodeValue = content;
-			break
-		case "B":
-		case "U":
-		case "I":
-			cursor.previousSibling.nodeValue = content;
-			break;
+		node.nodeValue = content;
 	}
 }
 
@@ -204,25 +211,29 @@ function insertNewline() {
 }
 
 function toggleBold() {
-	toggleButton('bold', 'B');
+	toggleButton('b', 'B');
 }
 
 function toggleItalic() {
-	toggleButton('italic', 'I');
+	toggleButton('i', 'I');
 }
 
 function toggleUnderline() {
-	toggleButton('underline', 'U');
+	toggleButton('u', 'U');
 }
 
 function toggleButton(id, tag) {
 	toggleButtonAppearance(id);
-	if ((editor.lastChild) && (editor.lastChild.nodeName != "#text")) {
-		// If the current node is <tag> or a parent node is <tag>
-		if ((editor.lastChild.nodeName == tag) || ((editor.lastChild).ancestors().include(tag))) {
+	// If the node before the cursor is not plain text
+	if ((cursor.previousSibling) && (cursor.previousSibling.nodeName != "#text")) {
+		// If the node before the cursor is already <tag> or is an ancestor of <tag>
+		if ((cursor.previousSibling.nodeName == tag) || ((editor.lastChild).ancestors().include(tag))) {
 			// Create an empty text node after the <tag> node to work with
-			editor.appendChild(document.createTextNode(""));
-		} 
+			editor.insertBefore(document.createTextNode(""), cursor);
+		} else {
+			// Open a <tag>
+			insertElement(tag);
+		}
 	} else {
 		// Open a <tag>
 		insertElement(tag);
@@ -230,6 +241,9 @@ function toggleButton(id, tag) {
 }
 
 function toggleButtonAppearance(id) {
+	// Ensure the id is lowercase
+	id = id.toLowerCase();
+
 	// If the button is already active
 	if ($(id).classNames().include("active")) {
 		// Deactivate it
