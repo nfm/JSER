@@ -139,6 +139,8 @@ function encodeCharacter(character) {
 			character = "\u0026";
 			break;
 	}
+
+	return character;
 }
 
 function insertBackspace() {
