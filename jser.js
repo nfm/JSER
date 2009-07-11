@@ -117,8 +117,14 @@ function insertCharacter(ascii) {
 				node.parentNode.appendChild(document.createTextNode(character));
 				break;
 			case "#text":
-				// Append the character to this text node
-				node.nodeValue += character;
+				// If this text node is not a direct child of #editor (ie its parent is <tag>)
+				if (node.parentNode.id != "editor") {
+					// Create a new text node as a child of this node's parent
+					node.parentNode.appendChild(document.createTextNode(character));
+				} else {
+					// Create a new text node before the cursor
+					editor.insertBefore(document.createTextNode(character), cursor);
+				}
 				break;
 			default:
 				// Create a new text node and append it to this node
