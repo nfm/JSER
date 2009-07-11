@@ -84,6 +84,12 @@ function processKeyDown(event) {
 		case (Event.KEY_ESC):
 			Event.stop(event);
 			break;
+		case (Event.KEY_RIGHT):
+			moveCursorForwards();
+			break;
+		case (Event.KEY_LEFT):
+			moveCursorBackwards();
+			break;
 		// . key
 		case 190:
 			Event.stop(event);
@@ -119,7 +125,7 @@ function insertCharacter(ascii) {
 				node.appendChild(document.createTextNode(character));
 		}
 	} else {
-		// The editor is empty - create a text node before the cursor
+		// The cursor is at the start of the editor - create a text node before the cursor
 		editor.insertBefore(document.createTextNode(character), cursor);
 	}
 }
@@ -260,6 +266,10 @@ function startCursorTimer() {
 	cursorTimer = setTimeout("startCursorTimer(); toggleCursor()", 800);
 }
 
+function stopCursorTimer() {
+	clearTimeout(cursorTimer);
+}
+
 function restartCursorTimer() {
 	setCursorVisible();
 	clearTimeout(cursorTimer);
@@ -280,6 +290,46 @@ function setCursorHidden() {
 
 function setCursorVisible() {
 	cursor.style.visibility = "visible";
+}
+
+function placeCursor(position, node) {
+	newCursor = cursor.cloneNode(true);
+	cursor.remove();
+	stopCursorTimer();
+
+	switch(position) {
+		case "top":
+			Element.insert(node, {top: newCursor});
+			break;
+		case "bottom":
+			Element.insert(node, {bottom: newCursor});
+			break;
+		case "before":
+			Element.insert(node, {before: newCursor});
+			break;
+		case "after":
+			Element.insert(node, {after: newCursor});
+			break;
+	}
+
+	cursor = $('cursor');
+	startCursorTimer();
+}
+
+function moveCursorBackwards() {
+	// If the cursor is not at the start of the text
+	if ((cursor.previousSibling) && (cursor.previousSibling.previousSibling)) {
+		placeCursor("after", cursor.previousSibling.previousSibling);
+	} else {
+		placeCursor("top", editor);
+	}
+}
+
+function moveCursorForwards() {
+	// If the cursor is not at before the last node
+	if (cursor.nextSibling) {
+		placeCursor("after", cursor.nextSibling);
+	}
 }
 
 //]]>
