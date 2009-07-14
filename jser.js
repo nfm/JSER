@@ -323,18 +323,53 @@ function placeCursor(position, node) {
 }
 
 function moveCursorBackwards() {
-	// If the cursor is not at the start of the text
-	if ((cursor.previousSibling) && (cursor.previousSibling.previousSibling)) {
-		placeCursor("after", cursor.previousSibling.previousSibling);
-	} else {
-		placeCursor("top", editor);
+	// If the cursor is not at the start of the text or the start of a <tag>
+	if (cursor.previousSibling) {
+		switch (cursor.previousSibling.nodeName) {
+			// If the previousSibling is a printed character node
+			case "#text":
+			case "BR":
+				placeCursor("before", cursor.previousSibling);
+				break;
+			// If the previousSibling is a </tag>
+			default:
+				placeCursor("after", cursor.previousSibling.lastChild);
+				moveCursorBackwards();
+				break;
+		}
+	// If the cursor is the first node in a <tag>
+	} else if (cursor.parentNode.id != "editor") {
+		// Toggle the tag's button appearance
+		toggleButtonAppearance(cursor.parentNode.nodeName);
+		// Move the cursor out of the <tag>
+		placeCursor("before", cursor.parentNode);
+		// And move it backwards again over the previous printed character
+		moveCursorBackwards();
 	}
 }
 
 function moveCursorForwards() {
-	// If the cursor is not at before the last node
+	// If the cursor is not the last node
 	if (cursor.nextSibling) {
-		placeCursor("after", cursor.nextSibling);
+		switch (cursor.nextSibling.nodeName) {
+			case "#text":
+			case "BR":
+				placeCursor("after", cursor.nextSibling);
+				break;
+			// If the next node is a <tag>
+			default:
+				toggleButtonAppearance(cursor.nextSibling.nodeName);
+				placeCursor("after", cursor.nextSibling.firstChild);
+				break;
+		}
+	}
+
+	// If the cursor is now before a <tag>
+	if ((cursor.nextSibling.nodeName != "#text") && (cursor.nextSibling.nodeName != "BR")) {
+		// Toggle the tag's button appearance
+		toggleButtonAppearance(cursor.nextSibling.nodeName);
+		// And move into the <tag>
+		placeCursor("before", cursor.nextSibling.firstChild);
 	}
 }
 
