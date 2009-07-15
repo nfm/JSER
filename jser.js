@@ -175,69 +175,49 @@ function encodeCharacter(character) {
 	return character;
 }
 
-function insertBackspace() {
-	var content;
-	var node = cursor.previousSibling;
+function removeCharacters(startNode, endNode) {
+	// While startNode still exists
+	while ((startNode != null) && (endNode != null)){
 
-	// If there is no node before the cursor
-	if (!node) { return; }
-
-	switch(node.nodeName) {
-		// If the item before the cursor is plain text
-		case "#text":
-			content = node.nodeValue;
-			break;
-		// If the item before the cursor is a newline
-		case "BR":
-			editor.removeChild(node);
-			return;
-		// If the item before the cursor is bold, italic, or underlined text
-		case "B":
-		case "I":
-		case "U":
-			// Find the last descendant of the node before the cursor
-			if (node) {
-				while ((node) && (node.lastChild != "") && (node.lastChild != null)) {
-					node = node.lastChild;
-				}
-				content = node.nodeValue;
-			}
-
-			// If this node is an empty tag (ie <b/>)
-			if ((content == null) || (content == "")) {
-				// Toggle the appearance of the appropriate button
-				toggleButtonAppearance(node.nodeName);
-				// Remove the node
-				node.parentNode.removeChild(node);
-				// Backspace again into the parent node
-				insertBackspace();
+		// Remove the current end node
+		switch(endNode.nodeName) {
+			// If this node is plain text or a <br />
+			case "#text":
+			case "BR":
+				editor.removeChild(endNode);
 				return;
-			}
-			break;
-		default:
-			alert("insertBackspace(): nodeName " + node.nodeName + " not handled");
-	}
+			// If this node is a <tag> or </tag>
+			default:
+				// Find the last descendant of endNode
+				while ((endNode) && (endNode.lastChild != "") && (endNode.lastChild != null)) {
+					endNode = endNode.lastChild;
+				}
 
-	content = content.slice(0, content.length - 1);
+				// Remove the last descendant of endNode
+				endNode.parentNode.removeChild(endNode);
 
-	if (content == "") {
-		node.parentNode.removeChild(node);
-	} else {
-		node.nodeValue = content;
+				// If endNode was an empty tag (ie <b/>)
+				if ((endNode.nodeValue == null) || (endNode.nodeValue == "")) {
+					// Toggle the appearance of the appropriate button
+					toggleButtonAppearance(endNode.nodeName);
+					// Backspace again into the parent endNode
+					insertBackspace();
+					return;
+				}
+				break;
+		}
+
+		// Decrement endNode
+		endNode = endNode.previousSibling;
 	}
 }
 
-// Determines whether str ends with suffix
-function suffixed(str, suffix) {
-	if (str.substring(str.length - suffix.length, str.length) == suffix) {
-		return true;
-	} else {
-		return false;
-	}
+function insertBackspace() {
+	removeCharacters(cursor.previousSibling, cursor.previousSibling);
 }
 
 function insertDelete() {
-	editor.innerHTML += ' delete ';
+	removeCharacters(cursor.nextSibling, cursor.nextSibling);
 }
 
 function insertNewline() {
