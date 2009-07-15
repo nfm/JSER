@@ -8,6 +8,7 @@ $('u').observe('click', toggleUnderline);
 // Observe document for keyboard activity
 document.observe('keydown', processKeyDown);
 document.observe('keypress', processKeyPress);
+document.observe('keyup', processKeyUp);
 
 // Observe for 'blur' of editor to make cursor hidden
 document.observe('click', setCursorHidden);

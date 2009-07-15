@@ -3,6 +3,7 @@
 var editor = $('editor');
 var cursor = $('cursor');
 var cursorInterval;
+var nonprintingKeyInterval;
 
 function insertElement(type) {
 	var element = new Element(type);
@@ -76,13 +77,36 @@ function processKeyPress(event) {
 
 function processKeyDown(event) {
 	switch(event.which) {
-		case (Event.KEY_DELETE):
-		case 0:
-			Event.stop(event);
-			insertDelete();
-			break;
 		case (Event.KEY_ESC):
 			Event.stop(event);
+			break;
+		case 0:
+		case (Event.KEY_DELETE):
+		case (Event.KEY_RIGHT):
+		case (Event.KEY_LEFT):
+		case 190:
+			repeatNonprintingKey(event);
+			processNonprintingKey(event);
+			break;
+		default:
+			break;
+	}
+}
+
+function processKeyUp() {
+	clearInterval(nonprintingKeyInterval);
+}
+
+function repeatNonprintingKey(event) {
+	clearInterval(nonprintingKeyInterval);
+	nonprintingKeyInterval = setInterval('processNonprintingKey(' + event.which + ')', 40);
+}
+
+function processNonprintingKey(key) {
+	switch(key) {
+		case 0:
+		case (Event.KEY_DELETE):
+			insertDelete();
 			break;
 		case (Event.KEY_RIGHT):
 			moveCursorForwards();
@@ -90,12 +114,8 @@ function processKeyDown(event) {
 		case (Event.KEY_LEFT):
 			moveCursorBackwards();
 			break;
-		// . key
 		case 190:
-			Event.stop(event);
 			insertCharacter(46);
-			break;
-		default:
 			break;
 	}
 }
