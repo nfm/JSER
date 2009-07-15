@@ -57,4 +57,5 @@ body {
 
 #cursor {
 	margin: 0 -3px;
+	-moz-user-select: none;
 }
