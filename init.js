@@ -13,6 +13,7 @@ document.observe('keypress', processKeyPress);
 document.observe('click', setCursorHidden);
 document.observe('click', stopCursorTimer);
 $('editor').observe('click', restartCursorTimer);
+$('editor').observe('click', moveCursorToMouse);
 $('editor').observe('click', Event.stop);
 
 startCursorTimer();

@@ -375,4 +375,8 @@ function moveCursorForwards() {
 	}
 }
 
+function moveCursorToMouse(Event) {
+	placeCursor("before", Event.explicitOriginalTarget);
+}
+
 //]]>
