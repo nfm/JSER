@@ -114,7 +114,7 @@ function insertCharacter(ascii) {
 		switch(node.nodeName) {
 			case "BR":
 				// Create a new text node after the <br /> in the parent node
-				node.parentNode.appendChild(document.createTextNode(character));
+				node.parentNode.insertBefore(document.createTextNode(character), cursor);
 				break;
 			case "#text":
 				// If this text node is not a direct child of #editor (ie its parent is <tag>)
@@ -343,7 +343,7 @@ function moveCursorBackwards() {
 		toggleButtonAppearance(cursor.parentNode.nodeName);
 		// Move the cursor out of the <tag>
 		placeCursor("before", cursor.parentNode);
-		// And move it backwards again over the previous printed character
+		// And move it backwards again over the actual printed character
 		moveCursorBackwards();
 	}
 }
@@ -362,14 +362,16 @@ function moveCursorForwards() {
 				placeCursor("after", cursor.nextSibling.firstChild);
 				break;
 		}
-	}
 
-	// If the cursor is now before a <tag>
-	if ((cursor.nextSibling.nodeName != "#text") && (cursor.nextSibling.nodeName != "BR")) {
-		// Toggle the tag's button appearance
-		toggleButtonAppearance(cursor.nextSibling.nodeName);
-		// And move into the <tag>
-		placeCursor("before", cursor.nextSibling.firstChild);
+		if (cursor.nextSibling) {
+			// If the cursor is now before a <tag>
+			if ((cursor.nextSibling.nodeName != "#text") && (cursor.nextSibling.nodeName != "BR")) {
+				// Toggle the tag's button appearance
+				toggleButtonAppearance(cursor.nextSibling.nodeName);
+				// And move into the <tag>
+				placeCursor("before", cursor.nextSibling.firstChild);
+			}	
+		}
 	}
 }
 
