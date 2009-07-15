@@ -2,7 +2,7 @@
 
 var editor = $('editor');
 var cursor = $('cursor');
-var cursorTimer;
+var cursorInterval;
 
 function insertElement(type) {
 	var element = new Element(type);
@@ -30,7 +30,7 @@ function insertElement(type) {
 }
 
 function processKeyPress(event) {
-	restartCursorTimer();
+	restartCursorInterval();
 	Event.stop(event);
 
 	switch(event.which) {
@@ -268,18 +268,18 @@ function toggleButtonAppearance(id) {
 	}
 }
 
-function startCursorTimer() {
-	cursorTimer = setTimeout("startCursorTimer(); toggleCursor()", 800);
+function startCursorInterval() {
+	cursorInterval = setInterval("toggleCursor()", 800);
 }
 
-function stopCursorTimer() {
-	clearTimeout(cursorTimer);
+function stopCursorInterval() {
+	clearInterval(cursorInterval);
 }
 
-function restartCursorTimer() {
+function restartCursorInterval() {
 	setCursorVisible();
-	clearTimeout(cursorTimer);
-	cursorTimer = setTimeout("startCursorTimer(); toggleCursor()", 800);
+	clearInterval(cursorInterval);
+	cursorInterval = setInterval("toggleCursor()", 800);
 }
 
 function toggleCursor() {
@@ -301,7 +301,7 @@ function setCursorVisible() {
 function placeCursor(position, node) {
 	newCursor = cursor.cloneNode(true);
 	cursor.remove();
-	stopCursorTimer();
+	stopCursorInterval();
 
 	switch(position) {
 		case "top":
@@ -319,7 +319,7 @@ function placeCursor(position, node) {
 	}
 
 	cursor = $('cursor');
-	startCursorTimer();
+	startCursorInterval();
 }
 
 function moveCursorBackwards() {

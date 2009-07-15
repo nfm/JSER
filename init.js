@@ -11,13 +11,13 @@ document.observe('keypress', processKeyPress);
 
 // Observe for 'blur' of editor to make cursor hidden
 document.observe('click', setCursorHidden);
-document.observe('click', stopCursorTimer);
+document.observe('click', stopCursorInterval);
 
 // Observe for 'focus' of #editor to make cursor visible
-$('editor').observe('click', restartCursorTimer);
+$('editor').observe('click', restartCursorInterval);
 $('editor').observe('click', moveCursorToMouse);
 $('editor').observe('click', Event.stop);
 
-startCursorTimer();
+startCursorInterval();
 
 //]]>
