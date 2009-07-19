@@ -1,9 +1,9 @@
 //<![CDATA[
 
 // Observe buttons for mouse click
-$('b').observe('click', toggleBold);
-$('i').observe('click', toggleItalic);
-$('u').observe('click', toggleUnderline);
+$$('.button').each( function(button) {
+	button.observe('click', buttonPress);
+});
 
 // Observe document for keyboard activity
 document.observe('keydown', processKeyDown);
@@ -19,6 +19,12 @@ $('editor').observe('click', restartCursorInterval);
 $('editor').observe('click', moveCursorToMouse);
 $('editor').observe('click', Event.stop);
 
+// Create a cursor in #editor
+cursor = document.createElement('span');
+cursor.appendChild(document.createTextNode('\u2502'));
+cursor.id = "cursor";
+cursor.style.visibility = "visible";
+$('editor').appendChild(cursor);
 startCursorInterval();
 
 //]]>

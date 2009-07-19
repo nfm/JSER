@@ -44,7 +44,7 @@ function processKeyPress(event) {
 		// Handle ctrl-b
 		case 98:
 			if (event.ctrlKey) {
-				toggleBold();
+				toggleButton('b');
 			} else {
 				insertCharacter(event.which);
 			}
@@ -52,7 +52,7 @@ function processKeyPress(event) {
 		// Handle ctrl-i
 		case 105:
 			if (event.ctrlKey) {
-				toggleItalic();
+				toggleButton('i');
 			} else {
 				insertCharacter(event.which);
 			}
@@ -60,7 +60,7 @@ function processKeyPress(event) {
 		// Handle ctrl-u
 		case 117:
 			if (event.ctrlKey) {
-				toggleUnderline();
+				toggleButton('u');
 			} else {
 				insertCharacter(event.which);
 			}
@@ -99,7 +99,7 @@ function processKeyUp() {
 
 function repeatNonprintingKey(event) {
 	clearInterval(nonprintingKeyInterval);
-	nonprintingKeyInterval = setInterval('processNonprintingKey(' + event.which + ')', 40);
+	nonprintingKeyInterval = setInterval('processNonprintingKey(' + event.which + ')', 60);
 }
 
 function processNonprintingKey(key) {
@@ -224,20 +224,25 @@ function insertNewline() {
 	insertElement('BR');
 }
 
-function toggleBold() {
-	toggleButton('b', 'B');
+function buttonPress(event) {
+	var id = Event.findElement(event, "DIV");
+	toggleButton(id);
 }
 
-function toggleItalic() {
-	toggleButton('i', 'I');
-}
-
-function toggleUnderline() {
-	toggleButton('u', 'U');
-}
-
-function toggleButton(id, tag) {
+function toggleButton(id) {
 	toggleButtonAppearance(id);
+
+	switch(id) {
+		case "b":
+		case "i":
+		case "u":
+			tag = id.toUpperCase();
+			break;
+		case "link":
+			tag = "A";
+			break;
+	}
+
 	// If the node before the cursor is not plain text
 	if ((cursor.previousSibling) && (cursor.previousSibling.nodeName != "#text")) {
 		// If the node before the cursor is already <tag> or is an ancestor of <tag>
@@ -254,9 +259,9 @@ function toggleButton(id, tag) {
 	}
 }
 
-function toggleButtonAppearance(id) {
+function toggleButtonAppearance(button) {
 	// Ensure the id is lowercase
-	id = id.toLowerCase();
+	var id = button.toLowerCase();
 
 	// If the button is already active
 	if ($(id).classNames().include("active")) {

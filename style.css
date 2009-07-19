@@ -32,12 +32,9 @@ body {
 	cursor: text;
 }
 
-.inline {
+.button {
 	display: inline;
 	padding: 0.25em 0.5em;
-}
-
-.button {
 	font-size: 1.1em;
 	font-family: monospace;
 	cursor: pointer;
