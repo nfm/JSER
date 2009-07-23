@@ -73,15 +73,76 @@ function processKeyDown(event) {
 			break;
 		case 0:
 		case (Event.KEY_DELETE):
-		case (Event.KEY_RIGHT):
-		case (Event.KEY_LEFT):
+		// '.' key
 		case 190:
 			repeatNonprintingKey(event);
 			processNonprintingKey(event);
 			break;
+		case (Event.KEY_RIGHT):
+			if (event.ctrlKey) {
+				// Move the cursor forward to the end of the word boundary
+				node = findEndOfWord(cursor.nextSibling);
+				if (node) {
+					placeCursor("before", node);
+				} else {
+					placeCursor("bottom", cursor.parentNode);
+				}
+			} else {
+				repeatNonprintingKey(event);
+				processNonprintingKey(event);
+			}
+			break;
+		case (Event.KEY_LEFT):
+			if (event.ctrlKey) {
+				// Move the cursor backward to the start of the word boundary
+				node = findStartOfWord(cursor.previousSibling);
+				if (node) {
+					placeCursor("after", node);
+				} else {
+					placeCursor("top", cursor.parentNode);
+				}
+			} else {
+				repeatNonprintingKey(event);
+				processNonprintingKey(event);
+			}
+			break;
+		case (Event.KEY_HOME):
+			if (event.ctrlKey) {
+				// Move the cursor to the start of #editor
+				placeCursor("top", editor.firstChild);
+			} else {
+				// Move the cursor the the start of the current element
+				placeCursor("top", cursor.parentNode);
+			}
+			break;
+		case (Event.KEY_END):
+			if (event.ctrlKey) {
+				// Move the cursor to the end of #editor
+				placeCursor("bottom", editor.lastChild);
+			} else {
+				// Move the cursor the the end of the current element
+				placeCursor("bottom", cursor.parentNode);
+			}
+			break;
 		default:
 			break;
 	}
+}
+
+function findEndOfWord(node) {
+	do {
+		node = node.nextSibling;
+	}
+	while ((node) && (node.nodeValue != "\u00a0"));
+	return node;
+}
+
+function findStartOfWord(node) {
+	do {
+		node = node.previousSibling;
+	}
+	while ((node) && (node.nodeValue != "\u00a0"));
+	return node;
 }
 
 function processKeyUp() {
