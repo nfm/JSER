@@ -305,6 +305,11 @@ function toggleButton(id) {
 		case "link":
 			tag = "A";
 			break;
+		case "left":
+		case "center":
+		case "right":
+			setTextAlign(id);
+			return;
 	}
 
 	// If the cursor is an ancestor of <tag>
@@ -328,6 +333,10 @@ function toggleButton(id) {
 		}
 	}
 
+}
+
+function setTextAlign(alignment) {
+	cursor.parentNode.setStyle({ textAlign: alignment });
 }
 
 function isAncestor(name, node) {
