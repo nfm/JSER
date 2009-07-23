@@ -15,44 +15,50 @@ body {
 
 #buttons {
 	width: 98%;
-	height: 1.5em;
-	padding: 0.25em 1%;
-	background-color: #AAAAAA;
-	border: 1px solid transparent;
+	height: 30px;
+	padding: 4px 1% 0 1%;
+	background-color: #F7FFBF;
+	border: 1px solid #AAAAAA;
+	border-top: none;
 }
 
 #editor {
 	width: 94%;
+	padding: 3%;
 	border: 1px solid #AAAAAA;
 	border-top: none;
 	background-color: #FFFFFF;
 	min-height: 400px;
-	padding: 3%;
 	font-size: 0.9em;
 	cursor: text;
 }
 
 .button {
-	display: inline;
-	padding: 0.25em 0.5em;
-	font-size: 1.1em;
-	font-family: monospace;
+	height: 16px;
+	width: 16px;
+	padding: 4px;
+	margin: 0 2px;
+	float: left;
 	cursor: pointer;
 	border: 1px solid transparent;
 	-moz-border-radius: 5px;
 }
 
 .button:hover {
-	background-color: #F3F3F3;
+	background-color: #FFFFFF;
 	border: 1px solid #808080;
 }
 
 .active, .active:hover {
-	background-color: #D3D3D3;
+	background-color: #EFEFEF;
 	border: 1px solid #999999;
 }
 
 #cursor {
 	margin: 0 -3px;
 	-moz-user-select: none;
+}
+
+ul, ol {
+	margin: 1em 2em;
 }
