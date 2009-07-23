@@ -6,27 +6,18 @@ var cursorInterval;
 var nonprintingKeyInterval;
 
 function insertElement(type) {
+	// Create a new element and insert it before the cursor
 	var element = new Element(type);
-	var node = cursor.previousSibling;
+	cursor.parentNode.insertBefore(element, cursor);
 
-	// If there is a node before the cursor and it is not a text node
-	if ((node) && (node.nodeName != "#text")) {
-		// If the node is a <br />
-		if (node.nodeName == "BR") {
-			editor.insertBefore(element, cursor);
-		// For any other nodes (<b>, <i> etc)
-		} else {
-			// If the node's last child is not a text node or <br />
-			if ((node.lastChild) && (node.lastChild.nodeName != "#text") && (node.lastChild.nodeName != "BR")) {
-				// Append element to the node's last child
-				node.lastChild.appendChild(element);
-			} else {
-				// Append element to the node before the cursor
-				node.appendChild(element);
-			}
-		}
+	// If the element was a <br />
+	if (type == "BR") {
+		// Move the cursor after it
+		placeCursor("after", cursor.previousSibling);
+	// For all other element types
 	} else {
-		editor.insertBefore(element, cursor);
+		// Move the cursor into the element
+		placeCursor("top", cursor.previousSibling);
 	}
 }
 
@@ -121,39 +112,18 @@ function processNonprintingKey(key) {
 }
 
 function insertCharacter(ascii) {
-	character = encodeCharacter(String.fromCharCode(ascii));
+	var character = encodeCharacter(String.fromCharCode(ascii));
+	character = document.createTextNode(character);
 
-	var node = cursor.previousSibling;
-	// If there is a node before the cursor
-	if (node) {
-		// Find the last descendant of the node before the cursor
-		while (node.lastChild) {
-			node = node.lastChild;
-		}
-
-		switch(node.nodeName) {
-			case "BR":
-				// Create a new text node after the <br /> in the parent node
-				node.parentNode.insertBefore(document.createTextNode(character), cursor);
-				break;
-			case "#text":
-				// If this text node is not a direct child of #editor (ie its parent is <tag>)
-				if (node.parentNode.id != "editor") {
-					// Create a new text node as a child of this node's parent
-					node.parentNode.appendChild(document.createTextNode(character));
-				} else {
-					// Create a new text node before the cursor
-					editor.insertBefore(document.createTextNode(character), cursor);
-				}
-				break;
-			default:
-				// Create a new text node and append it to this node
-				node.appendChild(document.createTextNode(character));
-		}
-	} else {
-		// The cursor is at the start of the editor - create a text node before the cursor
-		editor.insertBefore(document.createTextNode(character), cursor);
+	// If #editor is empty
+	if (cursor.parentNode.id == "editor") {
+		// Create a new paragraph and move the cursor into it
+		editor.insertBefore(new Element("P"), cursor);
+		placeCursor("top", cursor.previousSibling);
 	}
+
+	// Insert the new character before the cursor
+	cursor.parentNode.insertBefore(character, cursor);
 }
 
 function encodeCharacter(character) {
@@ -178,16 +148,11 @@ function encodeCharacter(character) {
 function removeCharacters(startNode, endNode) {
 	// While startNode still exists
 	while ((startNode != null) && (endNode != null)){
-
 		// Remove the current end node
-		switch(endNode.nodeName) {
-			// If this node is plain text or a <br />
-			case "#text":
-			case "BR":
-				editor.removeChild(endNode);
-				return;
-			// If this node is a <tag> or </tag>
-			default:
+		if ((endNode.nodeName == "#text") || (endNode.nodeName == "BR")) {
+			endNode.parentNode.removeChild(endNode);
+		} else {
+
 				// Find the last descendant of endNode
 				while ((endNode) && (endNode.lastChild != "") && (endNode.lastChild != null)) {
 					endNode = endNode.lastChild;
@@ -204,7 +169,6 @@ function removeCharacters(startNode, endNode) {
 					insertBackspace();
 					return;
 				}
-				break;
 		}
 
 		// Decrement endNode
@@ -213,19 +177,56 @@ function removeCharacters(startNode, endNode) {
 }
 
 function insertBackspace() {
-	removeCharacters(cursor.previousSibling, cursor.previousSibling);
+	if (cursor.previousSibling) {
+		removeCharacters(cursor.previousSibling, cursor.previousSibling);
+	} else {
+		node = cursor.parentNode;
+		placeCursor("bottom", cursor.parentNode.previousSibling);
+		node.parentNode.removeChild(node);
+	}
 }
 
 function insertDelete() {
 	removeCharacters(cursor.nextSibling, cursor.nextSibling);
 }
 
+// FIXME: Refactor to allow styling tags within <li>...
+// ie parentNode.parentNode is not necessarily the ul or ol
 function insertNewline() {
-	insertElement('BR');
+	// If the cursor is in a <li>
+	if (cursor.parentNode.nodeName == "LI") {
+		// If the <li> isn't empty
+		if (cursor.previousSibling) {
+			// Insert a new <li> in the parent <ul> or <ol>
+			cursor.parentNode.parentNode.appendChild(new Element("LI"));
+			// Move the cursor into the new <li>
+			placeCursor("top", cursor.parentNode.parentNode.lastChild);
+		} else {
+			// Remove the <li> and break out of the <ul> or <ol>
+			var list = cursor.parentNode.parentNode
+			var list_item = cursor.parentNode;
+			placeCursor("after", list);
+			//alert(list.lastChild);
+			list_item.parentNode.removeChild(list_item);
+		}
+	} else {
+		// If the cursor's previous sibling is a <br />
+		if ((cursor.previousSibling) && (cursor.previousSibling.nodeName == "BR")) {
+			// Remove the previous <br />
+			cursor.parentNode.removeChild(cursor.previousSibling);
+			// Move the cursor out of the current paragraph
+			placeCursor("after", cursor.parentNode);
+			// And start a new paragraph before the cursor
+			insertElement('P');
+		} else {
+			// Insert a <br />
+			insertElement('BR');
+		}
+	}
 }
 
 function buttonPress(event) {
-	var id = Event.findElement(event, "DIV");
+	var id = Event.findElement(event, "DIV").id;
 	toggleButton(id);
 }
 
@@ -236,6 +237,8 @@ function toggleButton(id) {
 		case "b":
 		case "i":
 		case "u":
+		case "ul":
+		case "ol":
 			tag = id.toUpperCase();
 			break;
 		case "link":
@@ -243,20 +246,39 @@ function toggleButton(id) {
 			break;
 	}
 
-	// If the node before the cursor is not plain text
-	if ((cursor.previousSibling) && (cursor.previousSibling.nodeName != "#text")) {
-		// If the node before the cursor is already <tag> or is an ancestor of <tag>
-		if ((cursor.previousSibling.nodeName == tag) || ((editor.lastChild).ancestors().include(tag))) {
-			// Create an empty text node after the <tag> node to work with
-			editor.insertBefore(document.createTextNode(""), cursor);
+	// If the cursor is an ancestor of <tag>
+	ancestor = isAncestor(tag, cursor);
+	if (ancestor) {
+		if ((tag == "UL") || (tag == "OL")) {
+			// Move the cursor out of the list itself, not just the li
+			placeCursor("after", cursor.parentNode.parentNode);
 		} else {
-			// Open a <tag>
-			insertElement(tag);
+			// Move the cursor out of the <tag>
+			placeCursor("after", cursor.parentNode);
 		}
 	} else {
 		// Open a <tag>
 		insertElement(tag);
+
+		// If the tag was a <ul> or an <ol>
+		if ((tag == "UL") || (tag == "OL")) {
+			// Add a <li></li> as well
+			insertElement("LI");
+		}
 	}
+
+}
+
+function isAncestor(name, node) {
+	var ancestor;
+
+	for (ancestor in node.ancestors()) {
+		if (node.ancestors()[ancestor].nodeName == name) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 function toggleButtonAppearance(button) {
@@ -306,7 +328,7 @@ function setCursorVisible() {
 function placeCursor(position, node) {
 	newCursor = cursor.cloneNode(true);
 	cursor.remove();
-	stopCursorInterval();
+	clearInterval(cursorInterval);
 
 	switch(position) {
 		case "top":
@@ -381,7 +403,11 @@ function moveCursorForwards() {
 }
 
 function moveCursorToMouse(Event) {
-	placeCursor("before", Event.explicitOriginalTarget);
+	if (Event.explicitOriginalTarget == editor) {
+		placeCursor("top", editor);
+	} else {
+		placeCursor("before", Event.explicitOriginalTarget);
+	}
 }
 
 //]]>
