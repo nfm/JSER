@@ -326,8 +326,8 @@ function toggleButton(id) {
 			tag = id.toUpperCase();
 			break;
 		case "link":
-			tag = "A";
-			break;
+			toggleLinkLightbox();
+			return;
 		case "left":
 		case "center":
 		case "right":
@@ -563,14 +563,14 @@ function insertLink(text, href, target) {
 }
 
 function toggleLinkLightbox() {
-	if ($('overlay').style.display == "none") {
+	if ($('overlay').style.display == "block") {
+		$('overlay').style.display = "none";
+		$('lightbox').style.display = "none";
+	} else {
 		$('overlay').style.display = "block";
 		$('lightbox').style.display = "block";
 		$('lightbox').style.marginTop = "-" + ($('lightbox').offsetHeight / 2) + "px";
 		$('lightbox').style.marginLeft = "-" + ($('lightbox').offsetWidth / 2) + "px";
-	} else {
-		$('overlay').style.display = "none";
-		$('lightbox').style.display = "none";
 	}
 }
 
