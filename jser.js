@@ -8,6 +8,17 @@ var nonprintingKeyInterval;
 function insertElement(type) {
 	// Create a new element and insert it before the cursor
 	var element = new Element(type);
+
+	// If the new element is a block element
+	if ((type == 'UL') || (type == 'OL')) {
+		// Move the cursor out of the containing <p>, <ul> or <ol>, if any exists
+		node = findBlockAncestor(cursor);
+		if (node) {
+			placeCursor('after', node);
+		}
+	} 
+
+	// Insert the new element before the cursor
 	cursor.parentNode.insertBefore(element, cursor);
 
 	// If the element was a <br />
@@ -18,6 +29,12 @@ function insertElement(type) {
 	} else {
 		// Move the cursor into the element
 		placeCursor("top", cursor.previousSibling);
+
+		// If the element was a <p>, <ul> or <ol>
+		if ((type == "P") || (type == "UL") || (type == "OL")) {
+			// Set the element as text-align: left
+			toggleButton('left');
+		}
 	}
 }
 
@@ -181,6 +198,9 @@ function insertCharacter(ascii) {
 		// Create a new paragraph and move the cursor into it
 		editor.insertBefore(new Element("P"), cursor);
 		placeCursor("top", cursor.previousSibling);
+
+		// Set the paragraph as text-align: left
+		toggleButton('left');
 	}
 
 	// Insert the new character before the cursor
@@ -242,7 +262,10 @@ function insertBackspace() {
 		removeCharacters(cursor.previousSibling, cursor.previousSibling);
 	} else {
 		node = cursor.parentNode;
-		placeCursor("bottom", cursor.parentNode.previousSibling);
+		// FIXME
+		// Cursor needs to move up to the parent, then down into the last descendant of the previousSibling of node (I think)
+		// Move the cursor to before it's parent node
+		placeCursor("before", cursor.parentNode);
 		node.parentNode.removeChild(node);
 	}
 }
@@ -312,7 +335,7 @@ function toggleButton(id) {
 			return;
 	}
 
-	// If the cursor is an ancestor of <tag>
+	// If <tag> is an ancestor of the cursor
 	ancestor = isAncestor(tag, cursor);
 	if (ancestor) {
 		if ((tag == "UL") || (tag == "OL")) {
@@ -335,8 +358,43 @@ function toggleButton(id) {
 
 }
 
+function setButtonOff(id) {
+	$(id).removeClassName("active");
+}
+
+function setButtonOn(id) {
+	$(id).addClassName("active");
+}
+
 function setTextAlign(alignment) {
-	cursor.parentNode.setStyle({ textAlign: alignment });
+	// Turn all text-alignment buttons off
+	setButtonOff('left');
+	setButtonOff('center');
+	setButtonOff('right');
+
+	// Turn this text-alignment button on
+	setButtonOn(alignment);
+
+	// Apply this text-align value to the surrounding <p>, <ul> or <ol>
+	for (ancestor in cursor.ancestors()) {
+		var nodeName = cursor.ancestors()[ancestor].nodeName;
+		if ((nodeName == 'P') || (nodeName == 'UL') || (nodeName == 'OL')) {
+			cursor.ancestors()[ancestor].style.textAlign = alignment;
+			return;
+		}
+	}
+}
+
+function findBlockAncestor(node) {
+	var blockAncestors = { 'P':'', 'UL':'', 'OL':'' };
+
+	for (ancestor in node.ancestors()) {
+		if (node.ancestors()[ancestor].nodeName in blockAncestors) {
+			return node.ancestors()[ancestor];
+		}
+	}
+
+	return false;
 }
 
 function isAncestor(name, node) {
@@ -358,10 +416,10 @@ function toggleButtonAppearance(button) {
 	// If the button is already active
 	if ($(id).classNames().include("active")) {
 		// Deactivate it
-		$(id).removeClassName("active");
+		setButtonOff(id);
 	} else {
 		// Activate it
-		$(id).addClassName("active");
+		setButtonOn(id);
 	}
 }
 
