@@ -15,9 +15,8 @@ document.observe('click', setCursorHidden);
 document.observe('click', stopCursorInterval);
 
 // Observe for 'focus' of #editor to make cursor visible
-$('editor').observe('click', restartCursorInterval);
-$('editor').observe('click', moveCursorToMouse);
-$('editor').observe('click', Event.stop);
+$('editor').observe('mousedown', restartCursorInterval);
+$('editor').observe('mousedown', moveCursorToMouse);
 
 // Create a cursor in #editor
 cursor = document.createElement('span');
