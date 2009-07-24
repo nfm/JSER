@@ -538,4 +538,40 @@ function moveCursorToMouse(Event) {
 	}
 }
 
+function insertLink(text, href, target) {
+	var element = new Element('A');
+
+	// Prepend 'http://' to the href if necessary
+	if (href.substr(0, 7) == "http://") {
+		element.href = href;
+	} else {
+		element.href = "http://" + href;
+	}
+
+	// Create a text node containing the link text
+	var textNode = document.createTextNode(text);
+	element.appendChild(textNode);
+
+	// If 'Open link in a new window' was checked
+	if (target) {
+		element.target = "_blank";
+	}
+
+	// Insert the link before the cursor, and turn the lightbox off
+	cursor.parentNode.insertBefore(element, cursor);
+	toggleLinkLightbox();
+}
+
+function toggleLinkLightbox() {
+	if ($('overlay').style.display == "none") {
+		$('overlay').style.display = "block";
+		$('lightbox').style.display = "block";
+		$('lightbox').style.marginTop = "-" + ($('lightbox').offsetHeight / 2) + "px";
+		$('lightbox').style.marginLeft = "-" + ($('lightbox').offsetWidth / 2) + "px";
+	} else {
+		$('overlay').style.display = "none";
+		$('lightbox').style.display = "none";
+	}
+}
+
 //]]>

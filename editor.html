@@ -7,6 +7,15 @@
     <script src='prototype.js' type='text/javascript'></script>
   </head>
   <body>
+		<div id="overlay"></div>
+		<div id="horizon">
+			<div id="lightbox">
+				<label for="url">URL:</label><input id="link_url" type="text" /><br />
+				<label for="link_text">Link text:</label><input id="link_text" type="text" /><br />
+				<input id="link_target" type="checkbox" /> Open link in a new window<br />
+				<input type="button" value="Insert" onclick="insertLink($('link_text').value, $('link_url').value, $('link_target').checked)" /> <input type="button" value="Cancel" onclick="toggleLinkLightbox();" />
+			</div>
+		</div>
     <div id='container'>
       <div id='buttons'>
         <div class='button' id='b' title="Bold (ctrl-b)"><img src="images/text_bold.png" alt="B" /></div>

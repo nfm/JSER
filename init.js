@@ -1,14 +1,21 @@
 //<![CDATA[
 
+// Observe the link button for the lightbox effect
+$('link').observe('click', toggleLinkLightbox);
+
 // Observe buttons for mouse click
 $$('.button').each( function(button) {
 	button.observe('click', buttonPress);
 });
 
+// Observe the lightbox to close it when clicked
+//$('lightbox').observe('click', toggleLinkLightbox);
+$('overlay').observe('click', toggleLinkLightbox);
+
 // Observe document for keyboard activity
-document.observe('keydown', processKeyDown);
-document.observe('keypress', processKeyPress);
-document.observe('keyup', processKeyUp);
+$('editor').observe('keydown', processKeyDown);
+$('editor').observe('keypress', processKeyPress);
+$('editor').observe('keyup', processKeyUp);
 
 // Observe for 'blur' of editor to make cursor hidden
 document.observe('click', setCursorHidden);
