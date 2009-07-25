@@ -97,8 +97,12 @@ function processKeyDown(event) {
 		case (Event.KEY_DELETE):
 		// '.' key
 		case 190:
-			repeatNonprintingKey(event);
-			processNonprintingKey(event);
+			if ((event.ctrlKey) || (event.shiftKey) || (event.altKey)) {
+				return;
+			} else {
+				repeatNonprintingKey(event);
+				processNonprintingKey(event);
+			}
 			break;
 		case (Event.KEY_RIGHT):
 			if (event.ctrlKey) {
