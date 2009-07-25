@@ -346,6 +346,7 @@ function insertNewline() {
 }
 
 function buttonPress(event) {
+	Event.stop(event);
 	var id = Event.findElement(event, "DIV").id;
 	toggleButton(id);
 }
