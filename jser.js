@@ -36,7 +36,7 @@ function insertElement(type) {
 		placeCursor("top", node);
 
 		// If the element was a <p>, <ul> or <ol>
-		if ((type == "P") || (type == "UL") || (type == "OL")) {
+		if (isBlockNode(element)) {
 			// Set the element as text-align: left
 			toggleButton('left');
 		}
@@ -244,7 +244,20 @@ function insertCharacter(ascii) {
 function encodeCharacter(character) {
 	switch(character) {
 		case " ":
-			character = "\u00a0";
+			// Check what the character before the cursor is
+			switch(cursor.previousSibling.nodeValue) {
+				// If it's a space, convert it to a &nbsp;
+				case " ":
+					cursor.previousSibling.nodeValue = "\u00a0";
+				// If it's a space or &nbsp;, we want to insert a &nbsp;
+				case "\u00a0":
+					character = "\u00a0";
+					break;
+				// For all other characters
+				default:
+					// Insert the space as a normal space
+					character = " ";
+			}
 			break;
 		case "<":
 			character = "\u003c";
@@ -414,8 +427,7 @@ function setTextAlign(alignment) {
 
 	// Apply this text-align value to the surrounding <p>, <ul> or <ol>
 	cursor.ancestors().each( function(ancestor) {
-		var nodeName = ancestor.nodeName;
-		if ((nodeName == 'P') || (nodeName == 'UL') || (nodeName == 'OL')) {
+		if (isBlockNode(ancestor)) {
 			ancestor.style.textAlign = alignment;
 			return;
 		}
@@ -426,7 +438,7 @@ function isBlockNode(node) {
 	var blockNodes = ['P', 'UL', 'OL'];
 
 	if (blockNodes.include(node.nodeName)) {
-		return node;
+		return true;
 	}
 }
 
