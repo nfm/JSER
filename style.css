@@ -85,6 +85,10 @@ input[type="button"] {
 	margin: 0.25em;
 }
 
+input[type="checkbox"] {
+	margin: 0.25em 0.5em;
+}
+
 /* Thanks to http://www.emanueleferonato.com for the CSS lightbox idea */
 div#overlay {
 	display: none;
