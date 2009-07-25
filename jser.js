@@ -3,6 +3,7 @@
 var editor = $('editor');
 var cursor = $('cursor');
 var cursorInterval;
+var nonprintingKeyTimeout;
 var nonprintingKeyInterval;
 
 function insertElement(type) {
@@ -167,12 +168,17 @@ function findStartOfWord(node) {
 }
 
 function processKeyUp() {
+	clearTimeout(nonprintingKeyTimeout);
 	clearInterval(nonprintingKeyInterval);
 }
 
 function repeatNonprintingKey(event) {
+	clearTimeout(nonprintingKeyTimeout);
 	clearInterval(nonprintingKeyInterval);
-	nonprintingKeyInterval = setInterval('processNonprintingKey(' + event.which + ')', 60);
+	processNonprintingKey(event.which);
+	nonprintingKeyTimeout = setTimeout(function() {
+		nonprintingKeyInterval = setInterval('processNonprintingKey(' + event.which + ')', 40);
+	}, 400);
 }
 
 function processNonprintingKey(key) {
@@ -232,14 +238,15 @@ function encodeCharacter(character) {
 
 function removeCharacters(startNode, endNode) {
 	// While startNode still exists
-	while ((startNode !== null) && (endNode !== null)){
+	while ((startNode !== null) && (endNode !== null)) {
 		// Remove the current end node
 		if ((endNode.nodeName == "#text") || (endNode.nodeName == "BR")) {
 			endNode.parentNode.removeChild(endNode);
 		} else {
 
 				// Find the last descendant of endNode
-				while ((endNode) && (endNode.lastChild !== "") && (endNode.lastChild !== null)) {
+				while(window.endNode) {
+				//while ((endNode) && (endNode.lastChild !== "") && (endNode.lastChild !== null)) {
 					endNode = endNode.lastChild;
 				}
 
@@ -247,7 +254,8 @@ function removeCharacters(startNode, endNode) {
 				endNode.parentNode.removeChild(endNode);
 
 				// If endNode was an empty tag (ie <b/>)
-				if ((endNode.nodeValue === null) || (endNode.nodeValue === "")) {
+				if (!window.endNode) {
+				//if ((endNode.nodeValue === null) || (endNode.nodeValue === "")) {
 					// Toggle the appearance of the appropriate button
 					toggleButtonAppearance(endNode.nodeName);
 					// Backspace again into the parent endNode
@@ -551,6 +559,16 @@ function moveCursorToMouse(Event) {
 
 function insertLink(text, href, target) {
 	var element = new Element('A');
+
+	// Check that an href and link text were entered
+	if (!window.href) {
+		alert('Enter a value for the URL');
+		return;
+	}
+	if (!window.text) {
+		alert('Enter a value for the link text');
+		return;
+	}
 
 	// Prepend 'http://' to the href if necessary
 	if (href.substr(0, 7) == "http://") {
