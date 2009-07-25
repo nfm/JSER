@@ -64,7 +64,7 @@ var editor = new Element('div', { 'id' : 'editor' });
 jser.appendChild(editor);
 
 // Create the cursor in #editor
-var cursor = new Element('span', { 'id' : 'cursor', 'style' : 'visibility = visible' });
+var cursor = new Element('span', { 'id' : 'cursor', 'style' : 'visibility: visible' });
 cursor.appendChild(document.createTextNode('\u2502'));
 editor.appendChild(cursor);
 startCursorInterval();
