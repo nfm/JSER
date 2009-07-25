@@ -274,7 +274,7 @@ function insertDelete() {
 	removeCharacters(cursor.nextSibling, cursor.nextSibling);
 }
 
-// FIXME: Refactor to allow styling tags within <li>...
+// FIXME: Refactor to allow a newline within styling tags in a <li>...
 // ie parentNode.parentNode is not necessarily the ul or ol
 function insertNewline() {
 	// If the cursor is in a <li>
@@ -287,7 +287,7 @@ function insertNewline() {
 			placeCursor("top", cursor.parentNode.parentNode.lastChild);
 		} else {
 			// Remove the <li> and break out of the <ul> or <ol>
-			var list = cursor.parentNode.parentNode
+			var list = cursor.parentNode.parentNode;
 			var list_item = cursor.parentNode;
 			placeCursor("after", list);
 			//alert(list.lastChild);
