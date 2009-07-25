@@ -8,27 +8,31 @@ var nonprintingKeyInterval;
 function insertElement(type) {
 	// Create a new element and insert it before the cursor
 	var element = new Element(type);
+	var node;
 
 	// If the new element is a block element
-	if ((type == 'UL') || (type == 'OL')) {
+	if (isBlockNode(element)) {
 		// Move the cursor out of the containing <p>, <ul> or <ol>, if any exists
-		node = findBlockAncestor(cursor);
-		if (node) {
-			placeCursor('after', node);
+		for (i = 0; i < cursor.ancestors().size(); i++) {
+			node = isBlockNode(cursor.ancestors()[i]);
+			if (node) {
+				placeCursor('after', node);
+				break;
+			}
 		}
-	} 
+	}
 
 	// Insert the new element before the cursor
-	cursor.parentNode.insertBefore(element, cursor);
+	node = cursor.parentNode.insertBefore(element, cursor);
 
 	// If the element was a <br />
 	if (type == "BR") {
 		// Move the cursor after it
-		placeCursor("after", cursor.previousSibling);
+		placeCursor("after", node);
 	// For all other element types
 	} else {
 		// Move the cursor into the element
-		placeCursor("top", cursor.previousSibling);
+		placeCursor("top", node);
 
 		// If the element was a <p>, <ul> or <ol>
 		if ((type == "P") || (type == "UL") || (type == "OL")) {
@@ -228,14 +232,14 @@ function encodeCharacter(character) {
 
 function removeCharacters(startNode, endNode) {
 	// While startNode still exists
-	while ((startNode != null) && (endNode != null)){
+	while ((startNode !== null) && (endNode !== null)){
 		// Remove the current end node
 		if ((endNode.nodeName == "#text") || (endNode.nodeName == "BR")) {
 			endNode.parentNode.removeChild(endNode);
 		} else {
 
 				// Find the last descendant of endNode
-				while ((endNode) && (endNode.lastChild != "") && (endNode.lastChild != null)) {
+				while ((endNode) && (endNode.lastChild !== "") && (endNode.lastChild !== null)) {
 					endNode = endNode.lastChild;
 				}
 
@@ -243,7 +247,7 @@ function removeCharacters(startNode, endNode) {
 				endNode.parentNode.removeChild(endNode);
 
 				// If endNode was an empty tag (ie <b/>)
-				if ((endNode.nodeValue == null) || (endNode.nodeValue == "")) {
+				if ((endNode.nodeValue === null) || (endNode.nodeValue === "")) {
 					// Toggle the appearance of the appropriate button
 					toggleButtonAppearance(endNode.nodeName);
 					// Backspace again into the parent endNode
@@ -376,25 +380,21 @@ function setTextAlign(alignment) {
 	setButtonOn(alignment);
 
 	// Apply this text-align value to the surrounding <p>, <ul> or <ol>
-	for (ancestor in cursor.ancestors()) {
-		var nodeName = cursor.ancestors()[ancestor].nodeName;
+	cursor.ancestors().each( function(ancestor) {
+		var nodeName = ancestor.nodeName;
 		if ((nodeName == 'P') || (nodeName == 'UL') || (nodeName == 'OL')) {
-			cursor.ancestors()[ancestor].style.textAlign = alignment;
+			ancestor.style.textAlign = alignment;
 			return;
 		}
-	}
+	});
 }
 
-function findBlockAncestor(node) {
-	var blockAncestors = { 'P':'', 'UL':'', 'OL':'' };
+function isBlockNode(node) {
+	var blockNodes = ['P', 'UL', 'OL'];
 
-	for (ancestor in node.ancestors()) {
-		if (node.ancestors()[ancestor].nodeName in blockAncestors) {
-			return node.ancestors()[ancestor];
-		}
+	if (blockNodes.include(node.nodeName)) {
+		return node;
 	}
-
-	return false;
 }
 
 function isAncestor(name, node) {
@@ -417,14 +417,25 @@ function toggleButtonAppearance(button) {
 	if ($(id).classNames().include("active")) {
 		// Deactivate it
 		setButtonOff(id);
+		// Remove the element if it was empty
+		removeEmptyElement();
 	} else {
 		// Activate it
 		setButtonOn(id);
 	}
 }
 
+function removeEmptyElement() {
+	var node = cursor.parentNode;
+	placeCursor("after", node);
+	if ((node.nodeValue === null) || (node.nodeValue === "")) {
+		//alert(node);
+		node.parentNode.removeChild(node);
+	}
+}
+
 function startCursorInterval() {
-	cursorInterval = setInterval("toggleCursor()", 800);
+	cursorInterval = setInterval(toggleCursor, 800);
 }
 
 function stopCursorInterval() {
@@ -434,7 +445,7 @@ function stopCursorInterval() {
 function restartCursorInterval() {
 	setCursorVisible();
 	clearInterval(cursorInterval);
-	cursorInterval = setInterval("toggleCursor()", 800);
+	cursorInterval = setInterval(toggleCursor, 800);
 }
 
 function toggleCursor() {
