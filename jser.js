@@ -132,6 +132,22 @@ function processKeyDown(event) {
 				processNonprintingKey(event);
 			}
 			break;
+		case (Event.KEY_UP):
+			if (event.shiftKey) {
+				// Select text upwards
+			} else {
+				repeatNonprintingKey(event);
+				processNonprintingKey(event);
+			}
+			break;
+		case (Event.KEY_DOWN):
+			if (event.shiftKey) {
+				// Select text downwards
+			} else {
+				repeatNonprintingKey(event);
+				processNonprintingKey(event);
+			}
+			break;
 		case (Event.KEY_HOME):
 			if (event.ctrlKey) {
 				// Move the cursor to the start of #editor
@@ -196,6 +212,10 @@ function processNonprintingKey(key) {
 			break;
 		case (Event.KEY_LEFT):
 			moveCursorBackwards();
+			break;
+		case (Event.KEY_UP):
+			break;
+		case (Event.KEY_DOWN):
 			break;
 		case 190:
 			insertCharacter(46);
