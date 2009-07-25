@@ -7,7 +7,7 @@ var nonprintingKeyTimeout;
 var nonprintingKeyInterval;
 
 function insertElement(type) {
-	// Create a new element and insert it before the cursor
+	// Create a new element
 	var element = new Element(type);
 	var node;
 
@@ -26,19 +26,15 @@ function insertElement(type) {
 	// Insert the new element before the cursor
 	node = cursor.parentNode.insertBefore(element, cursor);
 
-	// If the element was a <br />
-	if (type == "BR") {
-		// Move the cursor after it
-		placeCursor("after", node);
-	// For all other element types
-	} else {
+	// If the element was not a <br />
+	if (type != "BR") {
 		// Move the cursor into the element
 		placeCursor("top", node);
 
-		// If the element was a <p>, <ul> or <ol>
+		// If the element was a block element
 		if (isBlockNode(element)) {
 			// Set the element as text-align: left
-			toggleButton('left');
+			//toggleButton('left');
 		}
 	}
 }
@@ -326,31 +322,44 @@ function insertDelete() {
 // FIXME: Refactor to allow a newline within styling tags in a <li>...
 // ie parentNode.parentNode is not necessarily the ul or ol
 function insertNewline() {
+	var node;
+
 	// If the cursor is in a <li>
 	if (cursor.parentNode.nodeName == "LI") {
 		// If the <li> isn't empty
 		if (cursor.previousSibling) {
 			// Insert a new <li> in the parent <ul> or <ol>
-			cursor.parentNode.parentNode.appendChild(new Element("LI"));
+			insertElement('LI');
+			//cursor.parentNode.parentNode.appendChild(new Element("LI"));
 			// Move the cursor into the new <li>
-			placeCursor("top", cursor.parentNode.parentNode.lastChild);
+			//placeCursor("top", cursor.parentNode.parentNode.lastChild);
 		} else {
-			// Remove the <li> and break out of the <ul> or <ol>
-			var list = cursor.parentNode.parentNode;
-			var list_item = cursor.parentNode;
-			placeCursor("after", list);
-			//alert(list.lastChild);
-			list_item.parentNode.removeChild(list_item);
+			node = cursor.parentNode;
+			// Move the cursor out of the <ul> or <ol>
+			placeCursor("after", cursor.parentNode.parentNode);
+			// Remove the empty <li> 
+			node.parentNode.removeChild(node);
+			// Insert a <p>
+			insertElement('P');
 		}
 	} else {
 		// If the cursor's previous sibling is a <br />
 		if ((cursor.previousSibling) && (cursor.previousSibling.nodeName == "BR")) {
 			// Remove the previous <br />
-			cursor.parentNode.removeChild(cursor.previousSibling);
-			// Move the cursor out of the current paragraph
-			placeCursor("after", cursor.parentNode);
+			cursor.previousSibling.parentNode.removeChild(cursor.previousSibling);
 			// And start a new paragraph before the cursor
 			insertElement('P');
+		// If the cursor is in an empty <p>
+		} else if ((cursor.parentNode) && (cursor.parentNode.nodeName == "P") && (cursor.parentNode.firstChild == cursor)) {
+			node = cursor.parentNode;
+			// Move back into the previous <p>
+			placeCursor("bottom", cursor.parentNode.previousSibling);
+			// Remove the empty <p>
+			node.parentNode.removeChild(node);
+			// And put three <br />s instead of a <p /><br />
+			insertElement('BR');
+			insertElement('BR');
+			insertElement('BR');
 		} else {
 			// Insert a <br />
 			insertElement('BR');
@@ -438,7 +447,7 @@ function isBlockNode(node) {
 	var blockNodes = ['P', 'UL', 'OL'];
 
 	if (blockNodes.include(node.nodeName)) {
-		return true;
+		return node;
 	}
 }
 
