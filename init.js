@@ -37,27 +37,27 @@ var menu = new Element('div', { 'id' : 'menu' });
 jser.appendChild(menu);
 
 var buttons = [
-['b', 'Bold (ctrl-b)', 'text_bold.png'],
-['i', 'Italic (ctrl-i)', 'text_italic.png'],
-['u', 'Underline (ctrl-u)', 'text_underline.png'],
-['ul', 'Bullet List', 'text_list_bullets.png'],
-['ol', 'Numbered List', 'text_list_numbers.png'],
-['link', 'Insert hyperlink', 'page_link.png'],
-['left', 'Left justify', 'text_align_left.png'],
-['center', 'Center justify', 'text_align_center.png'],
-['right', 'Right justify', 'text_align_right.png']
+['b', 'Bold (ctrl-b)'],
+['i', 'Italic (ctrl-i)'],
+['u', 'Underline (ctrl-u)'],
+['ul', 'Bullet List'],
+['ol', 'Numbered List'],
+['link', 'Insert hyperlink'],
+['left', 'Left align text'],
+['center', 'Center text'],
+['right', 'Right align text'],
+['justify', 'Justify text']
 ];
 
 // Add each button to the menu
-buttons.each(function (btn) {
-	var button = new Element('div', { 'id' : btn[0], 'title' : btn[1], 'class' : 'button' });
-	var image = new Element('img', { 'src' : 'images/' + btn[2], 'alt' : btn[0] });
-	button.appendChild(image);
+for (index = 0; index < buttons.size(); index++) {
+	var button = new Element('div', { 'id' : buttons[index][0], 'title' : buttons[index][1], 'class' : 'button' });
+	button.setStyle({ 'backgroundImage' : "url('jserIcons.png')", 'backgroundPosition' : (index * -24 + 4) + "px 4px", backgroundRepeat : 'no-repeat' });
 	menu.appendChild(button);
 
 	// Observe each button for the click event
 	button.observe('click', buttonPress);
-});
+}
 
 // Create the editor div
 var editor = new Element('div', { 'id' : 'editor', 'contentEditable' : 'true' });
