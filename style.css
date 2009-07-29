@@ -25,6 +25,7 @@ body {
 #editor {
 	width: 94%;
 	padding: 3%;
+	outline: none;
 	border: 1px solid #AAAAAA;
 	border-top: none;
 	background-color: #FFFFFF;

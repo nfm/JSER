@@ -3,8 +3,8 @@
 // Include the JSER stylesheet
 document.getElementsByTagName('head')[0].appendChild(new Element('link', { 'href' : 'style.css', 'rel' : 'stylesheet', 'type' : 'text/css' }));
 
-// Operate on the element with id="jser"
-var jser = $('jser');
+// Operate on the elements with class="jser"
+var jser = $$('div.jser')[0];
 
 // Create the lightbox and overlay divs
 var overlay = new Element('div', { 'id' : 'overlay' });
@@ -60,26 +60,11 @@ buttons.each(function (btn) {
 });
 
 // Create the editor div
-var editor = new Element('div', { 'id' : 'editor' });
+var editor = new Element('div', { 'id' : 'editor', 'contentEditable' : 'true' });
 jser.appendChild(editor);
 
-// Create the cursor in #editor
-var cursor = new Element('span', { 'id' : 'cursor', 'style' : 'visibility: visible' });
-cursor.appendChild(document.createTextNode('\u2502'));
-editor.appendChild(cursor);
-startCursorInterval();
-
-// Observe #editor for keyboard activity
-document.observe('keydown', processKeyDown);
-document.observe('keypress', processKeyPress);
-document.observe('keyup', processKeyUp);
-
-// Observe for 'blur' of editor to make cursor hidden
-document.observe('click', setCursorHidden);
-document.observe('click', stopCursorInterval);
-
-// Observe for 'focus' of #editor to make cursor visible
-editor.observe('mousedown', restartCursorInterval);
-editor.observe('mousedown', moveCursorToMouse);
+// Focus on the editor and add a new paragraph at the insertion point
+editor.focus();
+document.execCommand('insertParagraph', false, null);
 
 //]]>
