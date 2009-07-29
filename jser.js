@@ -6,69 +6,28 @@ function cmd(name, args) {
 	document.execCommand(name, false, args);
 }
 
-function insertElement(type) {
-	// Create a new element
-	var element = new Element(type);
-	var node;
-
-	// If the new element is a block element
-	if (isBlockNode(element)) {
-		// Move the cursor out of the containing <p>, <ul> or <ol>, if any exists
-		for (i = 0; i < cursor.ancestors().size(); i++) {
-			node = isBlockNode(cursor.ancestors()[i]);
-			if (node) {
-				placeCursor('after', node);
-				break;
-			}
-		}
-	}
-
-	// Insert the new element before the cursor
-	node = cursor.parentNode.insertBefore(element, cursor);
-
-	// If the element was not a <br />
-	if (type != "BR") {
-		// Move the cursor into the element
-		placeCursor("top", node);
-
-		// If the element was a block element
-		if (isBlockNode(element)) {
-			// Set the element as text-align: left
-			//toggleButton('left');
-		}
-	}
-}
-
 function processKeyPress(event) {
 	restartCursorInterval();
 	Event.stop(event);
 
 	switch(event.which) {
-		// Handle ctrl-b
+		// Make ctrl-b toggle the bold button
 		case 98:
 			if (event.ctrlKey) {
 				toggleButton('b');
 			}
 			break;
-		// Handle ctrl-i
+		// Make ctrl-i toggle the italic button
 		case 105:
 			if (event.ctrlKey) {
 				toggleButton('i');
 			}
 			break;
-		// Handle ctrl-u
+		// Make ctrl-i toggle the underline button
 		case 117:
 			if (event.ctrlKey) {
 				toggleButton('u');
 			}
-			break;
-	}
-}
-
-function processKeyDown(event) {
-	switch(event.which) {
-		case (Event.KEY_ESC):
-			Event.stop(event);
 			break;
 	}
 }
