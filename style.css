@@ -80,11 +80,18 @@ body {
 
 .dropdown-menu {
 	clear: both;
+	position: relative;
+	z-index: 9999;
 	margin: 0 -1px;
-	padding: 0 0.25em;
-	padding-top: -10px;
 	background-color: #FFFFFF;
 	border: 1px solid #999999;
+}
+
+.dropdown-menu-entry {
+	position: relative;
+	z-index: 9999;
+	background-color: #FFFFFF;
+	padding: 0.125em 0.25em;
 }
 
 .dropdown-menu-entry:hover {
