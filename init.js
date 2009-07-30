@@ -36,6 +36,46 @@ horizon.appendChild(lightbox);
 var menu = new Element('div', { 'id' : 'menu' });
 jser.appendChild(menu);
 
+var dropdowns = [
+['style', '90', ['Paragraph', 'Heading&nbsp;1', 'Heading&nbsp;2', 'Heading&nbsp;3', 'Heading&nbsp;4']],
+['fontFamily', '100', ['Serif', 'Sans-Serif', 'Monospace']],
+['fontSize', '55', ['8pt', '10pt', '12pt', '14pt', '18pt', '24pt', '36pt']]
+];
+
+// Add each dropdown menu to the menu
+for (index = 0; index < dropdowns.size(); index++) {
+	// Create the dropdown button
+	var dropdownButton = new Element('div', { id : dropdowns[index][0], 'class' : 'dropdown' });
+	dropdownButton.setStyle({ 'width' : dropdowns[index][1] + 'px' });
+	dropdownButton.appendChild((new Element('div', { 'class' : 'dropdown-title' })).setStyle({ 'width' : dropdowns[index][1] - 24 + 'px' }));
+
+	// Create a control for the dropdown button
+	dropdownButton.appendChild(new Element('div', { class : 'dropdown-control' }));
+
+	// Observe the dropdown button for the click event
+	dropdownButton.observe('click', dropdownPress);
+	
+	// Add the dropdown button to the menu
+	menu.appendChild(dropdownButton);
+
+	// Create the dropdown menu
+	dropdownMenu = new Element('div', { 'id' : dropdowns[index][0] + '-menu', 'class' : 'dropdown-menu' });
+	dropdownMenu.hide();
+	dropdownButton.appendChild(dropdownMenu);
+
+	// Add each entry to the dropdown menu
+	for (entry = 0; entry < dropdowns[index][2].size(); entry++) {
+		var menuItem = new Element('div', { id : dropdowns[index][2][entry], class : 'dropdown-menu-entry' }).update(dropdowns[index][2][entry]);
+		menuItem.observe('click', dropdownEntryPress);
+		dropdownMenu.appendChild(menuItem);
+	}
+}
+
+// Select defaults for dropdown menus
+$('style').firstChild.update('Paragraph');
+$('fontFamily').firstChild.update('Serif');
+$('fontSize').firstChild.update('10pt');
+
 var buttons = [
 ['b', 'Bold (Ctrl-B)'],
 ['i', 'Italic (Ctrl-I)'],

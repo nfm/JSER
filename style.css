@@ -1,5 +1,6 @@
 * {
 	font-size: 1em;
+	font-family: sans-serif;
 	margin: 0;
 	padding: 0;
 }
@@ -44,7 +45,7 @@ body {
 	-moz-border-radius: 5px;
 }
 
-.button:hover {
+.button:hover, .dropdown:hover {
 	background-color: #FFFFFF;
 	border: 1px solid #808080;
 }
@@ -52,6 +53,42 @@ body {
 .active, .active:hover {
 	background-color: #EFEFEF;
 	border: 1px solid #999999;
+}
+
+.dropdown {
+	height: 24px;
+	margin: 0 2px;
+	font-size: 0.8em;
+	float: left;
+	cursor: pointer;
+	border: 1px solid #999999;
+	background-color: #FFFFFF;
+}
+
+.dropdown-title {
+	float: left;
+	margin: 4px;
+	overflow: hidden;
+}
+
+.dropdown-control {
+	float: right;
+	height: 16px;
+	width: 16px;
+	background: url('jserIcons.png') -240px 0px;
+}
+
+.dropdown-menu {
+	clear: both;
+	margin: 0 -1px;
+	padding: 0 0.25em;
+	padding-top: -10px;
+	background-color: #FFFFFF;
+	border: 1px solid #999999;
+}
+
+.dropdown-menu-entry:hover {
+	background-color: #F7FFBF;
 }
 
 ul, ol {

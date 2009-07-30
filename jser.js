@@ -41,9 +41,21 @@ function keyPress(event) {
 }
 
 function buttonPress(event) {
-	Event.stop(event);
-	var id = Event.findElement(event, "DIV").id;
+	event.stop();
+	var id = event.findElement("DIV").id;
 	toggleButton(id);
+}
+
+function dropdownPress(event) {
+	event.stop();
+	var id = event.currentTarget.id;
+	$(id + '-menu').show();
+}
+
+function dropdownEntryPress(event) {
+	event.stop();
+	this.parentNode.hide();
+	this.parentNode.parentNode.firstChild.update(this.textContent);
 }
 
 function toggleButton(id) {
