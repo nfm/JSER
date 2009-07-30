@@ -7,56 +7,38 @@ function cmd(name, args) {
 	document.execCommand(name, false, args);
 }
 
-function keyPress(event) {
-	if (event.ctrlKey) {
-		// Stop the event from bubbling
-		Event.stop(event);
+function setButtonOff(id) {
+	$(id).removeClassName("active");
+}
 
-		switch(event.which) {
-			// Make ctrl-7 insert an ordered list
-			case 55:
-				toggleButton('ol');
-				break;
-			// Make ctrl-8 insert an unordered list
-			case 56:
-				toggleButton('ul');
-				break;
-			// Make ctrl-b toggle the bold button
-			case 98:
-				toggleButton('b');
-				break;
-			// Make ctrl-i toggle the italic button
-			case 105:
-				toggleButton('i');
-				break;
-			// Make ctrl-k insert a link
-			case 107:
-				toggleButton('link');
-				break;
-			// Make ctrl-i toggle the underline button
-			case 117:
-				toggleButton('u');
-				break;
-		}
+function setButtonOn(id) {
+	$(id).addClassName("active");
+}
+
+function toggleButtonAppearance(button) {
+	// Ensure the id is lowercase
+	var id = button.toLowerCase();
+
+	// If the button is already active
+	if ($(id).classNames().include("active")) {
+		// Deactivate it
+		setButtonOff(id);
+	} else {
+		// Activate it
+		setButtonOn(id);
 	}
 }
 
-function buttonPress(event) {
-	event.stop();
-	var id = event.findElement("DIV").id;
-	toggleButton(id);
-}
-
-function dropdownPress(event) {
-	event.stop();
-	var id = event.currentTarget.id;
-	$(id + '-menu').show();
-}
-
-function dropdownEntryPress(event) {
-	event.stop();
-	this.parentNode.hide();
-	this.parentNode.parentNode.firstChild.update(this.textContent);
+function toggleLinkLightbox() {
+	if ($('overlay').style.display == "block") {
+		$('overlay').style.display = "none";
+		$('lightbox').style.display = "none";
+	} else {
+		$('overlay').style.display = "block";
+		$('lightbox').style.display = "block";
+		$('lightbox').style.marginTop = "-" + ($('lightbox').offsetHeight / 2) + "px";
+		$('lightbox').style.marginLeft = "-" + ($('lightbox').offsetWidth / 2) + "px";
+	}
 }
 
 function toggleButton(id) {
@@ -94,30 +76,56 @@ function toggleButton(id) {
 	}
 }
 
-function setButtonOff(id) {
-	$(id).removeClassName("active");
+function buttonPress(event) {
+	event.stop();
+	var id = event.findElement("DIV").id;
+	toggleButton(id);
 }
 
-function setButtonOn(id) {
-	$(id).addClassName("active");
+function dropdownPress(event) {
+	event.stop();
+	var id = event.currentTarget.id;
+	$(id + '-menu').show();
 }
 
-function setTextAlign(alignment) {
-	// Turn all text-alignment buttons off
-	setButtonOff('left');
-	setButtonOff('center');
-	setButtonOff('right');
+function dropdownEntryPress(event) {
+	event.stop();
+	this.parentNode.hide();
+	this.parentNode.parentNode.firstChild.update(this.textContent);
+}
 
-	// Turn this text-alignment button on
-	setButtonOn(alignment);
+function keyPress(event) {
+	if (event.ctrlKey) {
+		// Stop the event from bubbling
+		Event.stop(event);
 
-	// Apply this text-align value to the surrounding <p>, <ul> or <ol>
-	cursor.ancestors().each( function(ancestor) {
-		if (isBlockNode(ancestor)) {
-			ancestor.style.textAlign = alignment;
-			return;
+		switch(event.which) {
+			// Make ctrl-7 insert an ordered list
+			case 55:
+				toggleButton('ol');
+				break;
+			// Make ctrl-8 insert an unordered list
+			case 56:
+				toggleButton('ul');
+				break;
+			// Make ctrl-b toggle the bold button
+			case 98:
+				toggleButton('b');
+				break;
+			// Make ctrl-i toggle the italic button
+			case 105:
+				toggleButton('i');
+				break;
+			// Make ctrl-k insert a link
+			case 107:
+				toggleButton('link');
+				break;
+			// Make ctrl-i toggle the underline button
+			case 117:
+				toggleButton('u');
+				break;
 		}
-	});
+	}
 }
 
 function isBlockNode(node) {
@@ -140,18 +148,22 @@ function isAncestor(name, node) {
 	return false;
 }
 
-function toggleButtonAppearance(button) {
-	// Ensure the id is lowercase
-	var id = button.toLowerCase();
+function setTextAlign(alignment) {
+	// Turn all text-alignment buttons off
+	setButtonOff('left');
+	setButtonOff('center');
+	setButtonOff('right');
 
-	// If the button is already active
-	if ($(id).classNames().include("active")) {
-		// Deactivate it
-		setButtonOff(id);
-	} else {
-		// Activate it
-		setButtonOn(id);
-	}
+	// Turn this text-alignment button on
+	setButtonOn(alignment);
+
+	// Apply this text-align value to the surrounding <p>, <ul> or <ol>
+	cursor.ancestors().each( function(ancestor) {
+		if (isBlockNode(ancestor)) {
+			ancestor.style.textAlign = alignment;
+			return;
+		}
+	});
 }
 
 function insertLink(text, href, target) {
@@ -186,18 +198,6 @@ function insertLink(text, href, target) {
 	// Insert the link before the cursor, and turn the lightbox off
 	cursor.parentNode.insertBefore(element, cursor);
 	toggleLinkLightbox();
-}
-
-function toggleLinkLightbox() {
-	if ($('overlay').style.display == "block") {
-		$('overlay').style.display = "none";
-		$('lightbox').style.display = "none";
-	} else {
-		$('overlay').style.display = "block";
-		$('lightbox').style.display = "block";
-		$('lightbox').style.marginTop = "-" + ($('lightbox').offsetHeight / 2) + "px";
-		$('lightbox').style.marginLeft = "-" + ($('lightbox').offsetWidth / 2) + "px";
-	}
 }
 
 function createEditor() {
