@@ -6,29 +6,37 @@ function cmd(name, args) {
 	document.execCommand(name, false, args);
 }
 
-function processKeyPress(event) {
-	restartCursorInterval();
-	Event.stop(event);
+function keyPress(event) {
+	if (event.ctrlKey) {
+		// Stop the event from bubbling
+		Event.stop(event);
 
-	switch(event.which) {
-		// Make ctrl-b toggle the bold button
-		case 98:
-			if (event.ctrlKey) {
+		switch(event.which) {
+			// Make ctrl-7 insert an ordered list
+			case 55:
+				toggleButton('ol');
+				break;
+			// Make ctrl-8 insert an unordered list
+			case 56:
+				toggleButton('ul');
+				break;
+			// Make ctrl-b toggle the bold button
+			case 98:
 				toggleButton('b');
-			}
-			break;
-		// Make ctrl-i toggle the italic button
-		case 105:
-			if (event.ctrlKey) {
+				break;
+			// Make ctrl-i toggle the italic button
+			case 105:
 				toggleButton('i');
-			}
-			break;
-		// Make ctrl-i toggle the underline button
-		case 117:
-			if (event.ctrlKey) {
+				break;
+			// Make ctrl-k insert a link
+			case 107:
+				toggleButton('link');
+				break;
+			// Make ctrl-i toggle the underline button
+			case 117:
 				toggleButton('u');
-			}
-			break;
+				break;
+		}
 	}
 }
 

@@ -37,12 +37,12 @@ var menu = new Element('div', { 'id' : 'menu' });
 jser.appendChild(menu);
 
 var buttons = [
-['b', 'Bold (ctrl-b)'],
-['i', 'Italic (ctrl-i)'],
-['u', 'Underline (ctrl-u)'],
-['ul', 'Bullet List'],
-['ol', 'Numbered List'],
-['link', 'Insert hyperlink'],
+['b', 'Bold (Ctrl-B)'],
+['i', 'Italic (Ctrl-I)'],
+['u', 'Underline (Ctrl-U)'],
+['ol', 'Numbered List (Ctrl-7)'],
+['ul', 'Bullet List (Ctrl-8)'],
+['link', 'Insert hyperlink (Ctrl-K)'],
 ['left', 'Left align text'],
 ['center', 'Center text'],
 ['right', 'Right align text'],
@@ -62,6 +62,9 @@ for (index = 0; index < buttons.size(); index++) {
 // Create the editor div
 var editor = new Element('div', { 'id' : 'editor', 'contentEditable' : 'true' });
 jser.appendChild(editor);
+
+// Observe the editor for keyboard shortcuts
+editor.observe('keypress', keyPress);
 
 // Focus on the editor and add a new paragraph at the insertion point
 editor.focus();
