@@ -1,31 +1,79 @@
 //<![CDATA[
 
-var editor = $('editor');
 var jser;
+
+function $(id) {
+	return document.getElementById(id);
+}
+
+function createElement(type, args) {
+	var index;
+
+	el = document.createElement(type);
+	for (arg in args) {
+		name = arg;
+		value = args[arg];
+		if (name == "textNode") {
+			el.appendChild(document.createTextNode(value));
+		} else {
+			el.setAttribute(name, value);
+		}
+	}
+
+	return el;
+}
+
+function observe(element, eventType, functionName) {
+	element.addEventListener(eventType, functionName, true);
+}
+
+function setStyle(element, args) {
+	for (arg in args) {
+		name = arg;
+		value = args[arg];
+		style = element.getAttribute('style') || "";
+		element.setAttribute('style', style + (name + ": " + value + ";"));
+	}
+}
+
+function hide(el) {
+	setStyle(el, { 'display' : 'none' });
+}
+
+function classNames(el) {
+	var names = [];
+	var classes = el.className.split(" ");
+	for (name in classes) {
+		names.push(name);
+	}
+
+	alert(names);
+	return names;
+}
 
 function cmd(name, args) {
 	document.execCommand(name, false, args);
 }
 
-function setButtonOff(id) {
-	$(id).removeClassName("active");
+function setButtonOff(el) {
+	el.removeClassName("active");
 }
 
-function setButtonOn(id) {
-	$(id).addClassName("active");
+function setButtonOn(el) {
+	el.addClassName("active");
 }
 
 function toggleButtonAppearance(button) {
 	// Ensure the id is lowercase
-	var id = button.toLowerCase();
+	var el = $(button.toLowerCase());
 
 	// If the button is already active
-	if ($(id).classNames().include("active")) {
+	if ((classNames(el)).include("active")) {
 		// Deactivate it
-		setButtonOff(id);
+		setButtonOff(el);
 	} else {
 		// Activate it
-		setButtonOn(id);
+		setButtonOn(el);
 	}
 }
 
@@ -97,7 +145,7 @@ function dropdownEntryPress(event) {
 function keyPress(event) {
 	if (event.ctrlKey) {
 		// Stop the event from bubbling
-		Event.stop(event);
+		event.stop;
 
 		switch(event.which) {
 			// Make ctrl-7 insert an ordered list
@@ -167,7 +215,7 @@ function setTextAlign(alignment) {
 }
 
 function insertLink(text, href, target) {
-	var element = new Element('A');
+	var element = createElement('A');
 
 	// Check that an href and link text were entered
 	if (!window.href) {
@@ -202,11 +250,11 @@ function insertLink(text, href, target) {
 
 function createEditor() {
 	// Create the editor div
-	var editor = new Element('div', { 'id' : 'editor', 'contentEditable' : 'true' });
+	editor = createElement('div', { 'id' : 'editor', 'contentEditable' : 'true' });
 	jser.appendChild(editor);
 
 	// Observe the editor for keyboard shortcuts
-	editor.observe('keypress', keyPress);
+	observe(editor, 'keypress', keyPress);
 
 	// Focus on the editor and add a new paragraph at the insertion point
 	editor.focus();
@@ -230,13 +278,13 @@ function createButtons(menu) {
 	];
 
 	// Add each button to the menu
-	for (index = 0; index < buttons.size(); index++) {
-		var button = new Element('div', { 'id' : buttons[index][0], 'title' : buttons[index][1], 'class' : 'button' });
-		button.setStyle({ 'backgroundImage' : "url('jserIcons.png')", 'backgroundPosition' : (index * -24 + 4) + "px 4px", backgroundRepeat : 'no-repeat' });
+	for (index = 0; index < buttons.length; index++) {
+		var button = createElement('div', { 'id' : buttons[index][0], 'title' : buttons[index][1], 'class' : 'button' });
+		setStyle(button, { 'background-image' : "url('jserIcons.png')", 'background-position' : (index * -24 + 4) + "px 4px", 'background-repeat' : 'no-repeat' });
 		menu.appendChild(button);
 
 		// Observe each button for the click event
-		button.observe('click', buttonPress);
+		observe(button, 'click', buttonPress);
 	}
 }
 
@@ -250,43 +298,45 @@ function createDropdowns(menu) {
 	];
 
 	// Add each dropdown menu to the menu
-	for (index = 0; index < dropdowns.size(); index++) {
+	for (index = 0; index < dropdowns.length; index++) {
 		// Create the dropdown button
-		var dropdownButton = new Element('div', { id : dropdowns[index][0], 'class' : 'dropdown' });
-		dropdownButton.setStyle({ 'width' : dropdowns[index][1] + 'px' });
-		dropdownButton.appendChild((new Element('div', { 'class' : 'dropdown-title' })).setStyle({ 'width' : dropdowns[index][1] - 24 + 'px' }));
+		var dropdownButton = createElement('div', { 'id' : dropdowns[index][0], 'class' : 'dropdown' });
+		setStyle(dropdownButton, { 'width' : dropdowns[index][1] + 'px' });
+		var dropdownTitle = createElement('div', { 'class' : 'dropdown-title' });
+		setStyle(dropdownTitle, { 'width' : dropdowns[index][1] - 24 + 'px' });
+		dropdownButton.appendChild(dropdownTitle);
 
 		// Create a control for the dropdown button
-		dropdownButton.appendChild(new Element('div', { 'class' : 'dropdown-control' }));
+		dropdownButton.appendChild(createElement('div', { 'class' : 'dropdown-control' }));
 
 		// Observe the dropdown button for the click event
-		dropdownButton.observe('click', dropdownPress);
+		observe(dropdownButton, 'click', dropdownPress);
 		
 		// Add the dropdown button to the menu
 		menu.appendChild(dropdownButton);
 
 		// Create the dropdown menu
-		dropdownMenu = new Element('div', { 'id' : dropdowns[index][0] + '-menu', 'class' : 'dropdown-menu' });
-		dropdownMenu.hide();
+		dropdownMenu = createElement('div', { 'id' : dropdowns[index][0] + '-menu', 'class' : 'dropdown-menu' });
+		hide(dropdownMenu);
 		dropdownButton.appendChild(dropdownMenu);
 
 		// Add each entry to the dropdown menu
-		for (entry = 0; entry < dropdowns[index][2].size(); entry++) {
-			var menuItem = new Element('div', { id : dropdowns[index][2][entry], 'class' : 'dropdown-menu-entry' }).update(dropdowns[index][2][entry]);
-			menuItem.observe('click', dropdownEntryPress);
+		for (entry = 0; entry < dropdowns[index][2].length; entry++) {
+			var menuItem = createElement('div', { id : dropdowns[index][2][entry], 'class' : 'dropdown-menu-entry', 'textNode' : dropdowns[index][2][entry] });
+			observe(menuItem, 'click', dropdownEntryPress);
 			dropdownMenu.appendChild(menuItem);
 		}
 	}
 
 	// Select defaults for dropdown menus
-	$('style').firstChild.update('Paragraph');
-	$('fontFamily').firstChild.update('Serif');
-	$('fontSize').firstChild.update('10pt');
+	//$('style').firstChild.update('Paragraph');
+	//$('fontFamily').firstChild.update('Serif');
+	//$('fontSize').firstChild.update('10pt');
 }
 
 // Create the menu
 function createMenu() {
-	var menu = new Element('div', { 'id' : 'menu' });
+	var menu = createElement('div', { 'id' : 'menu' });
 	jser.appendChild(menu);
 
 	createDropdowns(menu);
@@ -295,28 +345,28 @@ function createMenu() {
 
 function createLightbox() {
 	// Create the lightbox and overlay divs
-	var overlay = new Element('div', { 'id' : 'overlay' });
-	overlay.observe('click', toggleLinkLightbox);
+	var overlay = createElement('div', { 'id' : 'overlay' });
+	observe(overlay, 'click', toggleLinkLightbox);
 	jser.appendChild(overlay);
 
-	var horizon = new Element('div', { 'id' : 'horizon' });
+	var horizon = createElement('div', { 'id' : 'horizon' });
 	jser.appendChild(horizon);
 
-	var lightbox = new Element('div', { 'id' : 'lightbox' });
-	lightbox.appendChild(new Element('label', { 'for' : 'link_url' }).update('URL:'));
-	lightbox.appendChild(new Element('input', { 'id' : 'link_url', 'type' : 'text' }));
-	lightbox.appendChild(new Element('br'));
-	lightbox.appendChild(new Element('label', { 'for' : 'link_text' }).update('Link text:'));
-	lightbox.appendChild(new Element('input', { 'id' : 'link_text', 'type' : 'text' }));
-	lightbox.appendChild(new Element('br'));
-	lightbox.appendChild(new Element('input', { 'id' : 'link_target', 'type' : 'checkbox' }));
-	lightbox.appendChild(new Element('textNode').update('Open link in a new window'));
-	lightbox.appendChild(new Element('br'));
-	var insert_button = new Element('input', { 'type' : 'button', 'value' : 'Insert' });
-	insert_button.observe('click', insertLink);
+	var lightbox = createElement('div', { 'id' : 'lightbox' });
+	lightbox.appendChild(createElement('label', { 'for' : 'link_url', 'textNode' : 'URL:' }));
+	lightbox.appendChild(createElement('input', { 'id' : 'link_url', 'type' : 'text' }));
+	lightbox.appendChild(createElement('br'));
+	lightbox.appendChild(createElement('label', { 'for' : 'link_text', 'textNode' : 'Link text:' }));
+	lightbox.appendChild(createElement('input', { 'id' : 'link_text', 'type' : 'text' }));
+	lightbox.appendChild(createElement('br'));
+	lightbox.appendChild(createElement('input', { 'id' : 'link_target', 'type' : 'checkbox' }));
+	//lightbox.appendChild(createElement('textNode').update('Open link in a new window'));
+	lightbox.appendChild(createElement('br'));
+	var insert_button = createElement('input', { 'type' : 'button', 'value' : 'Insert' });
+	observe(insert_button, 'click', insertLink);
 	lightbox.appendChild(insert_button);
-	var cancel_button = new Element('input', { 'type' : 'button', 'value' : 'Cancel' });
-	cancel_button.observe('click', toggleLinkLightbox);
+	var cancel_button = createElement('input', { 'type' : 'button', 'value' : 'Cancel' });
+	observe(cancel_button, 'click', toggleLinkLightbox);
 	lightbox.appendChild(cancel_button);
 	horizon.appendChild(lightbox);
 }
@@ -324,10 +374,10 @@ function createLightbox() {
 // Initialize the editor
 function init() {
 	// Include the JSER stylesheet
-	document.getElementsByTagName('head')[0].appendChild(new Element('link', { 'href' : 'style.css', 'rel' : 'stylesheet', 'type' : 'text/css' }));
+	document.getElementsByTagName('head')[0].appendChild(createElement('link', { 'href' : 'style.css', 'rel' : 'stylesheet', 'type' : 'text/css' }));
 
-	// Operate on the elements with class="jser"
-	jser = $$('div.jser')[0];
+	// Operate on the element with id="jser"
+	jser = $('jser');
 
 	// Create the lightbox, menu, and editor div itself
 	createLightbox();
