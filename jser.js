@@ -186,14 +186,19 @@ function dropdownPress(event) {
 	var id = event.currentTarget.id;
 	var menu = $(id + "-menu");
 
-	// Hide all dropdown menus
-	var menus = $$('dropdown-menu');
-	for (i = 0; i < menus.length; i++) {
-		hide(menus[i]);
+	// If this dropdown menu was already open
+	if ((menu.style.display == "block")) {
+		hide(menu);
+	} else {
+		// Hide all dropdown menus
+		var menus = $$('dropdown-menu');
+		for (i = 0; i < menus.length; i++) {
+			hide(menus[i]);
+		}
+		
+		// And show the clicked dropdown menu
+		show(menu);
 	}
-	
-	// And show the clicked dropdown menu
-	show(menu);
 }
 
 function dropdownEntryPress(event) {
