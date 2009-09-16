@@ -338,7 +338,7 @@ function createDropdowns(menu) {
 	var entry, index;
 
 	var dropdowns = [
-	['style', '90', ['Paragraph', 'Heading&nbsp;1', 'Heading&nbsp;2', 'Heading&nbsp;3', 'Heading&nbsp;4']],
+	['style', '90', ['Paragraph', 'Heading 1', 'Heading 2', 'Heading 3', 'Heading 4']],
 	['fontFamily', '100', ['Serif', 'Sans-Serif', 'Monospace']],
 	['fontSize', '55', ['8pt', '10pt', '12pt', '14pt', '18pt', '24pt', '36pt']]
 	];
