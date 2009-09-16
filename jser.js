@@ -6,6 +6,10 @@ function $(id) {
 	return document.getElementById(id);
 }
 
+function $$(name) {
+	return document.getElementsByClassName(name);
+}
+
 function createElement(type, args) {
 	var index, el, name, value;
 
@@ -36,6 +40,10 @@ function setStyle(element, args) {
 		style = element.getAttribute('style') || "";
 		element.setAttribute('style', style + (name + ": " + value + ";"));
 	}
+}
+
+function update(el, text) {
+	el.textContent = text;
 }
 
 function show(el) {
@@ -175,15 +183,23 @@ function buttonPress(event) {
 }
 
 function dropdownPress(event) {
-	event.stopPropagation();
 	var id = event.currentTarget.id;
-	show($(id + '-menu'));
+	var menu = $(id + "-menu");
+
+	// Hide all dropdown menus
+	var menus = $$('dropdown-menu');
+	for (i = 0; i < menus.length; i++) {
+		hide(menus[i]);
+	}
+	
+	// And show the clicked dropdown menu
+	show(menu);
 }
 
 function dropdownEntryPress(event) {
 	event.stopPropagation();
-	this.parentNode.hide();
-	this.parentNode.parentNode.firstChild.update(this.textContent);
+	hide(this.parentNode);
+	update(this.parentNode.parentNode.firstChild, this.textContent);
 }
 
 function keyPress(event) {
