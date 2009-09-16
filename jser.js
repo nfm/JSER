@@ -131,14 +131,25 @@ function toggleButtonAppearance(button) {
 
 function toggleLinkLightbox() {
 	if ($('overlay').style.display == "block") {
-		$('overlay').style.display = "none";
-		$('lightbox').style.display = "none";
+		hideLinkLightbox();
 	} else {
-		$('overlay').style.display = "block";
-		$('lightbox').style.display = "block";
-		$('lightbox').style.marginTop = "-" + ($('lightbox').offsetHeight / 2) + "px";
-		$('lightbox').style.marginLeft = "-" + ($('lightbox').offsetWidth / 2) + "px";
+		showLinkLightbox();
 	}
+}
+
+function hideLinkLightbox() {
+	$('overlay').style.display = "none";
+	$('lightbox').style.display = "none";
+
+	// FIXME:
+	// And set the link button to inactive
+}
+
+function showLinkLightbox() {
+	$('overlay').style.display = "block";
+	$('lightbox').style.display = "block";
+	$('lightbox').style.marginTop = "-" + ($('lightbox').offsetHeight / 2) + "px";
+	$('lightbox').style.marginLeft = "-" + ($('lightbox').offsetWidth / 2) + "px";
 }
 
 function toggleButton(id) {
@@ -190,14 +201,17 @@ function dropdownPress(event) {
 	if ((menu.style.display == "block")) {
 		hide(menu);
 	} else {
-		// Hide all dropdown menus
-		var menus = $$('dropdown-menu');
-		for (i = 0; i < menus.length; i++) {
-			hide(menus[i]);
-		}
-		
-		// And show the clicked dropdown menu
+		// Hide all dropdown menus and show the clicked dropdown menu
+		hideDropdowns();
 		show(menu);
+	}
+}
+
+function hideDropdowns() {
+	var i;
+	var menus = $$('dropdown-menu');
+	for (i = 0; i < menus.length; i++) {
+		hide(menus[i]);
 	}
 }
 
@@ -205,6 +219,15 @@ function dropdownEntryPress(event) {
 	event.stopPropagation();
 	hide(this.parentNode);
 	update(this.parentNode.parentNode.firstChild, this.textContent);
+}
+
+function keyDown(event) {
+	// Make ESC hide the dropdown menus and link lightbox
+	if (event.which == 27) {
+		event.stopPropagation;
+		hideDropdowns();
+		hideLinkLightbox();
+	}
 }
 
 function keyPress(event) {
@@ -323,6 +346,9 @@ function createEditor() {
 
 	// Observe the editor for keyboard shortcuts
 	observe(editor, 'keypress', keyPress);
+
+	// Observe the document for keydown events
+	observe(document, 'keydown', keyDown);
 
 	// Focus on the editor and add a new paragraph at the insertion point
 	editor.focus();
