@@ -174,7 +174,7 @@ function dropdownEntryPress(event) {
 function keyPress(event) {
 	if (event.ctrlKey) {
 		// Stop the event from bubbling
-		event.stopPropagation;
+		event.stopPropagation();
 
 		switch(event.which) {
 			// Make ctrl-7 insert an ordered list
