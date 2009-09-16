@@ -54,6 +54,18 @@ function findElement(el, nodeName) {
 	}
 }
 
+function include(arr, value) {
+	var i;
+
+	for (i = 0; i < arr.length; i++) {
+		if (arr[i] == value) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function classNames(el) {
 	var names = [];
 	var classes = el.className.split(" ");
@@ -82,7 +94,7 @@ function toggleButtonAppearance(button) {
 	var el = $(button.toLowerCase());
 
 	// If the button is already active
-	if ((classNames(el)).include("active")) {
+	if (include(classNames(el), "active")) {
 		// Deactivate it
 		setButtonOff(el);
 	} else {
