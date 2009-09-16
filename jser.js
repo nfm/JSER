@@ -74,7 +74,7 @@ function classNames(el) {
 	var names = [];
 	var classes = el.className.split(" ");
 	for (name in classes) {
-		names.push(name);
+		names.push(classes[name]);
 	}
 
 	return names;
@@ -84,12 +84,23 @@ function addClassName(el, name) {
 	el.className += " " + name;
 }
 
+function removeClassName(el, name) {
+	var pos = el.className.indexOf(name);
+	// If name was in el.className
+	if (pos != -1) {
+		// Remove name from el.className
+		el.className = el.className.substr(0, pos) + el.className.substr(pos + name.length);
+	}
+
+	return;
+}
+
 function cmd(name, args) {
 	document.execCommand(name, false, args);
 }
 
 function setButtonOff(el) {
-	el.removeClassName("active");
+	removeClassName(el, "active");
 }
 
 function setButtonOn(el) {
