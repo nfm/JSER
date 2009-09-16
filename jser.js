@@ -73,8 +73,11 @@ function classNames(el) {
 		names.push(name);
 	}
 
-	alert(names);
 	return names;
+}
+
+function addClassName(el, name) {
+	el.className += " " + name;
 }
 
 function cmd(name, args) {
@@ -86,7 +89,7 @@ function setButtonOff(el) {
 }
 
 function setButtonOn(el) {
-	el.addClassName("active");
+	addClassName(el, "active");
 }
 
 function toggleButtonAppearance(button) {
