@@ -391,9 +391,9 @@ function createDropdowns(menu) {
 	}
 
 	// Select defaults for dropdown menus
-	//$('style').firstChild.update('Paragraph');
-	//$('fontFamily').firstChild.update('Serif');
-	//$('fontSize').firstChild.update('10pt');
+	update($('style').firstChild, 'Paragraph');
+	update($('fontFamily').firstChild, 'Serif');
+	update($('fontSize').firstChild, '10pt');
 }
 
 // Create the menu
