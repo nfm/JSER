@@ -44,6 +44,16 @@ function hide(el) {
 	setStyle(el, { 'display' : 'none' });
 }
 
+function findElement(el, nodeName) {
+	while ((el.parentNode) && (el.nodeName != nodeName)) {
+		el = el.parentNode;
+	}
+
+	if ((el) && (el.nodeName == nodeName)) {
+		return el;
+	}
+}
+
 function classNames(el) {
 	var names = [];
 	var classes = el.className.split(" ");
@@ -130,7 +140,7 @@ function toggleButton(id) {
 
 function buttonPress(event) {
 	event.stopPropagation();
-	var id = event.findElement("DIV").id;
+	var id = findElement(event.target, 'DIV').id;
 	toggleButton(id);
 }
 
