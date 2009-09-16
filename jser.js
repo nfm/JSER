@@ -7,7 +7,7 @@ function $(id) {
 }
 
 function createElement(type, args) {
-	var index;
+	var index, el, name, value;
 
 	el = document.createElement(type);
 	for (arg in args) {
@@ -28,6 +28,8 @@ function observe(element, eventType, functionName) {
 }
 
 function setStyle(element, args) {
+	var name, value, style;
+
 	for (arg in args) {
 		name = arg;
 		value = args[arg];
@@ -51,6 +53,8 @@ function findElement(el, nodeName) {
 
 	if ((el) && (el.nodeName == nodeName)) {
 		return el;
+	} else {
+		return null;
 	}
 }
 
@@ -210,6 +214,8 @@ function isBlockNode(node) {
 
 	if (blockNodes.include(node.nodeName)) {
 		return node;
+	} else {
+		return null;
 	}
 }
 
@@ -279,7 +285,7 @@ function insertLink(text, href, target) {
 
 function createEditor() {
 	// Create the editor div
-	editor = createElement('div', { 'id' : 'editor', 'contentEditable' : 'true' });
+	var editor = createElement('div', { 'id' : 'editor', 'contentEditable' : 'true' });
 	jser.appendChild(editor);
 
 	// Observe the editor for keyboard shortcuts
@@ -345,7 +351,7 @@ function createDropdowns(menu) {
 		menu.appendChild(dropdownButton);
 
 		// Create the dropdown menu
-		dropdownMenu = createElement('div', { 'id' : dropdowns[index][0] + '-menu', 'class' : 'dropdown-menu' });
+		var dropdownMenu = createElement('div', { 'id' : dropdowns[index][0] + '-menu', 'class' : 'dropdown-menu' });
 		hide(dropdownMenu);
 		dropdownButton.appendChild(dropdownMenu);
 
