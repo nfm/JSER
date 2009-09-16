@@ -36,6 +36,10 @@ function setStyle(element, args) {
 	}
 }
 
+function show(el) {
+	setStyle(el, { 'display' : 'block' });
+}
+
 function hide(el) {
 	setStyle(el, { 'display' : 'none' });
 }
@@ -133,7 +137,7 @@ function buttonPress(event) {
 function dropdownPress(event) {
 	event.stopPropagation();
 	var id = event.currentTarget.id;
-	$(id + '-menu').show();
+	show($(id + '-menu'));
 }
 
 function dropdownEntryPress(event) {
