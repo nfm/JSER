@@ -125,19 +125,19 @@ function toggleButton(id) {
 }
 
 function buttonPress(event) {
-	event.stop();
+	event.stopPropagation();
 	var id = event.findElement("DIV").id;
 	toggleButton(id);
 }
 
 function dropdownPress(event) {
-	event.stop();
+	event.stopPropagation();
 	var id = event.currentTarget.id;
 	$(id + '-menu').show();
 }
 
 function dropdownEntryPress(event) {
-	event.stop();
+	event.stopPropagation();
 	this.parentNode.hide();
 	this.parentNode.parentNode.firstChild.update(this.textContent);
 }
@@ -145,7 +145,7 @@ function dropdownEntryPress(event) {
 function keyPress(event) {
 	if (event.ctrlKey) {
 		// Stop the event from bubbling
-		event.stop;
+		event.stopPropagation;
 
 		switch(event.which) {
 			// Make ctrl-7 insert an ordered list
