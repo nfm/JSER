@@ -11,7 +11,7 @@ function $$(name) {
 }
 
 function createElement(type, args) {
-	var index, el, name, value;
+	var el, name, value, arg;
 
 	el = document.createElement(type);
 	for (arg in args) {
@@ -20,6 +20,7 @@ function createElement(type, args) {
 		if (name == "textNode") {
 			el.appendChild(document.createTextNode(value));
 		} else {
+			alert('arg = ' + arg);
 			el.setAttribute(name, value);
 		}
 	}
@@ -32,7 +33,7 @@ function observe(element, eventType, functionName) {
 }
 
 function setStyle(element, args) {
-	var name, value, style;
+	var name, value, style, arg;
 
 	for (arg in args) {
 		name = arg;
@@ -79,6 +80,7 @@ function include(arr, value) {
 }
 
 function classNames(el) {
+	var name;
 	var names = [];
 	var classes = el.className.split(" ");
 	for (name in classes) {
@@ -129,14 +131,6 @@ function toggleButtonAppearance(button) {
 	}
 }
 
-function toggleLinkLightbox() {
-	if ($('overlay').style.display == "block") {
-		hideLinkLightbox();
-	} else {
-		showLinkLightbox();
-	}
-}
-
 function hideLinkLightbox() {
 	$('overlay').style.display = "none";
 	$('lightbox').style.display = "none";
@@ -150,6 +144,14 @@ function showLinkLightbox() {
 	$('lightbox').style.display = "block";
 	$('lightbox').style.marginTop = "-" + ($('lightbox').offsetHeight / 2) + "px";
 	$('lightbox').style.marginLeft = "-" + ($('lightbox').offsetWidth / 2) + "px";
+}
+
+function toggleLinkLightbox() {
+	if ($('overlay').style.display == "block") {
+		hideLinkLightbox();
+	} else {
+		showLinkLightbox();
+	}
 }
 
 function toggleButton(id) {
@@ -193,6 +195,14 @@ function buttonPress(event) {
 	toggleButton(id);
 }
 
+function hideDropdowns() {
+	var i;
+	var menus = $$('dropdown-menu');
+	for (i = 0; i < menus.length; i++) {
+		hide(menus[i]);
+	}
+}
+
 function dropdownPress(event) {
 	var id = event.currentTarget.id;
 	var menu = $(id + "-menu");
@@ -207,14 +217,6 @@ function dropdownPress(event) {
 	}
 }
 
-function hideDropdowns() {
-	var i;
-	var menus = $$('dropdown-menu');
-	for (i = 0; i < menus.length; i++) {
-		hide(menus[i]);
-	}
-}
-
 function dropdownEntryPress(event) {
 	event.stopPropagation();
 	hide(this.parentNode);
@@ -224,7 +226,7 @@ function dropdownEntryPress(event) {
 function keyDown(event) {
 	// Make ESC hide the dropdown menus and link lightbox
 	if (event.which == 27) {
-		event.stopPropagation;
+		event.stopPropagation();
 		hideDropdowns();
 		hideLinkLightbox();
 	}
