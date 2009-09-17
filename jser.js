@@ -220,6 +220,7 @@ function dropdownEntryPress(event) {
 	event.stopPropagation();
 	hide(this.parentNode);
 	update(this.parentNode.parentNode.firstChild, this.textContent);
+	cmd('fontName', this.textContent.toLowerCase());
 }
 
 function keyDown(event) {

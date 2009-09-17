@@ -63,12 +63,14 @@ body {
 	cursor: pointer;
 	border: 1px solid #999999;
 	background-color: #FFFFFF;
+	-moz-user-select: none;
 }
 
 .dropdown-title {
 	float: left;
 	margin: 4px;
 	overflow: hidden;
+	-moz-user-select: none;
 }
 
 .dropdown-control {
@@ -77,6 +79,7 @@ body {
 	width: 16px;
 	margin-top: 4px;
 	background: url('jserIcons.png') -240px 0px;
+	-moz-user-select: none;
 }
 
 .dropdown-menu {
@@ -86,6 +89,7 @@ body {
 	margin: 0 -1px;
 	background-color: #FFFFFF;
 	border: 1px solid #999999;
+	-moz-user-select: none;
 }
 
 .dropdown-menu-entry {
@@ -93,6 +97,7 @@ body {
 	z-index: 9999;
 	background-color: #FFFFFF;
 	padding: 0.125em 0.25em;
+	-moz-user-select: none;
 }
 
 .dropdown-menu-entry:hover {
