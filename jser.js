@@ -106,6 +106,7 @@ function removeClassName(el, name) {
 
 function cmd(name, args) {
 	document.execCommand(name, false, args);
+	$('editor').focus();
 }
 
 function setButtonOff(el) {
@@ -217,10 +218,14 @@ function dropdownPress(event) {
 }
 
 function dropdownEntryPress(event) {
+	var dropdownMenu = this.parentNode;
+	var dropdownTitle = dropdownMenu.parentNode.firstChild;
+	var dropdown = this.parentNode.parentNode;
+
 	event.stopPropagation();
-	hide(this.parentNode);
-	update(this.parentNode.parentNode.firstChild, this.textContent);
-	cmd('fontName', this.textContent.toLowerCase());
+	hide(dropdownMenu);
+	update(dropdownTitle, this.textContent);
+	cmd(dropdown.id, this.id);
 }
 
 function keyDown(event) {
@@ -388,9 +393,9 @@ function createDropdowns(menu) {
 	var entry, index;
 
 	var dropdowns = [
-	['style', '90', ['Paragraph', 'Heading 1', 'Heading 2', 'Heading 3', 'Heading 4']],
-	['fontFamily', '100', ['Serif', 'Sans-Serif', 'Monospace']],
-	['fontSize', '55', ['8pt', '10pt', '12pt', '14pt', '18pt', '24pt', '36pt']]
+	['formatBlock', '90', [['paragraph', 'Paragraph'], ['H1', 'Heading 1'], ['H2', 'Heading 2'], ['H3', 'Heading 3'], ['H4', 'Heading 4']]],
+	['fontName', '100', [['serif', 'Serif'], ['sans-serif', 'Sans-Serif'], ['monospace', 'Monospace']]],
+	['fontSize', '55', [['1', '8pt'], ['2', '10pt'], ['3', '12pt'], ['4', '14pt'], ['5', '18pt'], ['6', '24pt'], ['7', '36pt']]]
 	];
 
 	// Add each dropdown menu to the menu
@@ -418,15 +423,15 @@ function createDropdowns(menu) {
 
 		// Add each entry to the dropdown menu
 		for (entry = 0; entry < dropdowns[index][2].length; entry++) {
-			var menuItem = createElement('div', { id : dropdowns[index][2][entry], 'class' : 'dropdown-menu-entry', 'textNode' : dropdowns[index][2][entry] });
+			var menuItem = createElement('div', { id : dropdowns[index][2][entry][0], 'class' : 'dropdown-menu-entry', 'textNode' : dropdowns[index][2][entry][1] });
 			observe(menuItem, 'click', dropdownEntryPress);
 			dropdownMenu.appendChild(menuItem);
 		}
 	}
 
 	// Select defaults for dropdown menus
-	update($('style').firstChild, 'Paragraph');
-	update($('fontFamily').firstChild, 'Serif');
+	update($('formatBlock').firstChild, 'Paragraph');
+	update($('fontName').firstChild, 'Serif');
 	update($('fontSize').firstChild, '10pt');
 }
 
