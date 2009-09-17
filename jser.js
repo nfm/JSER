@@ -20,7 +20,6 @@ function createElement(type, args) {
 		if (name == "textNode") {
 			el.appendChild(document.createTextNode(value));
 		} else {
-			alert('arg = ' + arg);
 			el.setAttribute(name, value);
 		}
 	}
