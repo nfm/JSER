@@ -42,6 +42,7 @@ body {
 	cursor: pointer;
 	border: 1px solid transparent;
 	-moz-border-radius: 5px;
+	-moz-user-select: none;
 }
 
 .button:hover, .dropdown:hover {
