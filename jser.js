@@ -428,11 +428,6 @@ function createDropdowns(menu) {
 			dropdownMenu.appendChild(menuItem);
 		}
 	}
-
-	// Select defaults for dropdown menus
-	update($('formatBlock').firstChild, 'Paragraph');
-	update($('fontName').firstChild, 'Serif');
-	update($('fontSize').firstChild, '10pt');
 }
 
 // Create the menu
@@ -484,6 +479,13 @@ function init() {
 	createLightbox();
 	createMenu();
 	createEditor();
+
+	// Select defaults for dropdown menus
+	update($('formatBlock').firstChild, 'Paragraph');
+	update($('fontName').firstChild, 'Serif');
+	cmd('fontName', 'serif');
+	update($('fontSize').firstChild, '10pt');
+	cmd('fontSize', '2');
 }
 
 // The fun starts here
