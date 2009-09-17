@@ -238,36 +238,45 @@ function keyDown(event) {
 }
 
 function keyPress(event) {
+	var stopPropagation = false;
 	if (event.ctrlKey) {
-		// Stop the event from bubbling or triggering the browser default action
-		event.stopPropagation();
-		event.preventDefault();
-
 		switch(event.which) {
 			// Make ctrl-7 insert an ordered list
 			case 55:
 				toggleButton('ol');
+				stopPropagation = true;
 				break;
 			// Make ctrl-8 insert an unordered list
 			case 56:
 				toggleButton('ul');
+				stopPropagation = true;
 				break;
 			// Make ctrl-b toggle the bold button
 			case 98:
 				toggleButton('b');
+				stopPropagation = true;
 				break;
 			// Make ctrl-i toggle the italic button
 			case 105:
 				toggleButton('i');
+				stopPropagation = true;
 				break;
 			// Make ctrl-k insert a link
 			case 107:
 				toggleButton('link');
+				stopPropagation = true;
 				break;
 			// Make ctrl-i toggle the underline button
 			case 117:
 				toggleButton('u');
+				stopPropagation = true;
 				break;
+		}
+
+		if (stopPropagation) {
+			// Stop the event from bubbling or triggering the browser default action
+			event.stopPropagation();
+			event.preventDefault();
 		}
 	}
 }
