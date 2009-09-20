@@ -134,9 +134,7 @@ function toggleButtonAppearance(button) {
 function hideLinkLightbox() {
 	$('overlay').style.display = "none";
 	$('lightbox').style.display = "none";
-
-	// FIXME:
-	// And set the link button to inactive
+	setButtonOff($('link'));
 }
 
 function showLinkLightbox() {
