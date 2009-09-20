@@ -512,6 +512,9 @@ function init() {
 	cmd('fontName', 'serif');
 	update($('fontSize').firstChild, '10pt');
 	cmd('fontSize', '2');
+
+	// Use inline CSS to style input
+	cmd('styleWithCSS', true);
 }
 
 // The fun starts here
