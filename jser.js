@@ -154,6 +154,14 @@ function toggleLinkLightbox() {
 	}
 }
 
+function selectJustifyButton(buttonId) {
+	setButtonOff($('left'));
+	setButtonOff($('center'));
+	setButtonOff($('right'));
+	setButtonOff($('justify'));
+	setButtonOn($(buttonId));
+}
+
 function toggleButton(id) {
 	toggleButtonAppearance(id);
 
@@ -177,14 +185,23 @@ function toggleButton(id) {
 			toggleLinkLightbox();
 			return;
 		case "left":
+			selectJustifyButton('left');
 			cmd('justifyLeft');
 			break;
 		case "center":
-			//cmd('justifyCenter');
-			document.execCommand('justifycenter', false, null);
+			selectJustifyButton('center');
+			cmd('justifyCenter');
 			break;
 		case "right":
+			selectJustifyButton('right');
 			cmd('justifyRight');
+			break;
+		case "justify":
+			// FIXME:
+			// Moz content editable doesn't support text-align: justify
+			//selectJustifyButton('justify');
+			//cmd('justifyRight');
+			alert('text-align: justify not yet implemented');
 			break;
 	}
 }
